@@ -16,34 +16,36 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 const subscription = async () => {
-
-    //service worker
-    const register = await navigator.serviceWorker.register('./worker.js', {
-        scope: '/'
-    });
-    console.log('new service worker');
-
-    //este es el objeto que va a utilizar el servidor para comunicarse
-    const subscription = await register.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-    });
-
-    await fetch('/subscription', {
-        method: 'POST',
-        body: JSON.stringify(subscription),
-        headers: {
-            'Content-Type': 'application/json'
-        }
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./worker.js',{scope:'/'})
+            .then(function (registration) {
+                console.log('Service worker registration succeeded:', registration);
+                const register = registration;
+                register.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY) })
+                    .then((subscription) => {  //subscription es el objeto que va a utilizar el servidor para comunicarse
+                        fetch('/subscription', {
+                            method: 'POST',
+                            body: JSON.stringify(subscription),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(()=>{
+                            console.log('suscripto ok!');
+                        });
+                    });
+            }, /*catch*/ function (error) {
+                console.log('Service worker registration failed:', error);
+            });
+    } else {
+        console.log('Service workers are not supported.');
     }
-    );
-    console.log('subscripto correctamente!');
 }
 
 const form = document.querySelector('#miForm');
 const message = document.querySelector('#message');
 
-form.addEventListener('submit', e =>{
+form.addEventListener('submit', e => {
     e.preventDefault();
     fetch('/new-message', {
         method: 'POST',
@@ -54,7 +56,7 @@ form.addEventListener('submit', e =>{
             'Content-Type': 'application/json'
         }
     });
-    form.reset(); 
+    form.reset();
 });
 
 subscription();
