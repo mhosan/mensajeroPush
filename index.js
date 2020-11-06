@@ -7,7 +7,13 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 //middleware
-
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+    next();
+});
 app.use(morgan('dev')); //ver por consola las peticiones que llegan al server
 app.use(express.urlencoded({extended: false}));  //decodif. los datos que llegan desde un form
 app.use(express.json()); //convertir los datos que llegan del front de peticiones http a json
