@@ -1,4 +1,4 @@
-const { Router} = require('express');  //traer una parte de express
+const { Router } = require('express');  //traer una parte de express
 const router = Router();
 const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -12,26 +12,32 @@ router.post('/subscription', async (req, res) => {
     res.status(200).json();
     console.log('Llegó una suscripción: ', pushSubscription);
 
-    var suscrip = new suscripcionesEsquema ({
-        codigo:'1234',
+    var suscrip = new suscripcionesEsquema({
+        codigo: '1234',
         otro: 'otro dato'
     });
-    suscrip.save((err)=>{
+    suscrip.save((err) => {
         if (err) throw err;
         console.log('Guardado ok!');
     });
 
 });
-router.post('/new-message', async (req, res) =>{
-    const {message} = req.body;
+router.post('/new-message', async (req, res) => {
+    const { message } = req.body;
     const payload = JSON.stringify({
-        title : 'Mi notificación personalizada, ajustando borrador',
-        message : message
+        title: 'Mi notificación personalizada, ajustando borrador',
+        message: message
     });
-    try {
-        await webpush.sendNotification(pushSubscription, payload);
-    } catch (error) {
-        console.log(error);
-    }
+
+    await webpush.sendNotification(pushSubscription, payload)  //<--sendNotification es una promesa
+        .then()
+        .catch((err) => {
+            
+            if(err.statusCode === 410){
+                console.log(`Error, la subscripción ya no es válida:  ${err}`);
+            } else {
+                console.log(`Error:  ${err}`);
+            }
+        });
 });
 module.exports = router;
