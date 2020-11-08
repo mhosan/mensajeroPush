@@ -5,10 +5,11 @@ const webpush = require('../webpush');
 let pushSubscription;
 
 router.post('/subscription', async (req, res) => {
+    console.log("llegó una suscripción");
     pushSubscription = req.body;
     res.status(200).json();
+    console.log(pushSubscription);
 });
-
 router.post('/new-message', async (req, res) =>{
     const {message} = req.body;
     const payload = JSON.stringify({
@@ -21,5 +22,4 @@ router.post('/new-message', async (req, res) =>{
         console.log(error);
     }
 });
-
 module.exports = router;

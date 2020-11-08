@@ -30,6 +30,9 @@
                     <input type="text" placeholder="Escribir mensage" id="message" autofocus>
                     <button class="btn btn-primary">Enviar</button>
                 </form>
+                <p class="card-text" id="totalPush"></p>
+                <ul class="list-group list-group-flush" id="listaPush" style="height: 90px; overflow: auto;">
+                </ul>
             </div>
             <div class="card-footer text-muted text-center font-italic">
                 &copy;Desarrollos ..., todos los derechos reservandos.
@@ -41,3 +44,51 @@
 </body>
 
 </html>
+
+<!-- <body>
+    <div class="container">
+        <div class="card " style="width: 40rem; ">
+            <div class="card-header text-center h5">
+                Servidor Multiplayer On Line
+            </div>
+            <img src="/images/servidor.jpg" class="d-flex justify-content-center" alt="...">
+            <div class="card-body">
+                <h6 class="card-title" style="text-decoration:underline;">Detalle usuarios</h6>
+                <p class="card-text" id="ws"></p>
+                <ul class="list-group list-group-flush" id="lista" style="height: 90px; overflow: auto;">
+                </ul>
+                <a href="#" class="btn btn-primary">Help</a>
+            </div>
+            <div class="card-footer text-muted text-center font-italic">
+                &copy;Desarrollos pirulo, todos los derechos reservandos.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#ws').html('Sin conexiones');
+        const socket = io.connect();
+        socket.on('pagina', (data) => {
+            if (data.contador == 0) {
+                $('#ws').html('No hay nadie conectado');
+                $('#lista').empty();
+            } else {
+                if (data.conexion) {  //data.conexion=true: se conectó alguien
+                    $('#ws').html(
+                        'Total de usuarios conectados: ' +
+                        '<div class="badge badge-primary text-wrap" style="width: 2rem;">' + (data.contador) + '</div><br>'
+                    );
+                    $('#lista').append('<li class="list-group-item" id="' + data.id + '"> Usuario: ' + data.nombre + ',  Id: ' + data.id + '</li>');
+
+                } else { // se desconectó alguien
+                    $('#ws').html(
+                        'Total de usuarios conectados: ' +
+                        '<div class="badge badge-primary text-wrap" style="width: 2rem;">' + (data.contador) + '</div><br>'
+                    );
+                    $('#' + data.id).remove();
+                }
+            }
+        });
+        // socket.emit('pagina', { dato: 'soy yo, la página' });
+    </script>
+</body> -->
