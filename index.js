@@ -3,7 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const cors = require('cors');
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
 
 const app = express();
 
@@ -46,13 +46,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 //mongoose.Promise=global.Promise;
 //const db = mongoose.connection;
 //db.on('error',console.error.bind(console,'Mongo connection error: '));
-mongoose.connect('mongodb://localhost/msgpush', {useNewUrlParser : true}, (err) => {
+
+// mongoose.connect('mongodb://localhost/msgpush', {useNewUrlParser : true}, (err) => {
  
-   if (err) throw err;
+//    if (err) throw err;
  
-   console.log('Successfully connected');
-   const db = mongoose.connection;
-});
+//    console.log('Successfully connected');
+//    const db = mongoose.connection;
+// });
 
 
 // --------------------------------------------------------------------
