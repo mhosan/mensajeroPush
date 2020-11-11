@@ -8,6 +8,10 @@ const mensajesEsquema = require('../modelos/msg');
 
 let pushSubscription;
 
+router.get('/', (req, res) =>{
+    res.render('template', {mensaje : 'mensaje'});
+});
+
 router.post('/subscription', async (req, res) => {
     pushSubscription = req.body;
     res.status(200).json();
@@ -95,4 +99,6 @@ router.post('/new-message', async (req, res) => {
             }
         });
 });
+
 module.exports = router;
+

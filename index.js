@@ -63,9 +63,19 @@ mongoose.connect(process.env.uriRemota, {
 // --------------------------------------------------------------------
 // ----> Pagina de administ. del servidor -----------------------------
 // --------------------------------------------------------------------
-app.get('/'), (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-};
+app.set('view engine','hbs');
+
+// app.get('/'), (req, res) => {
+//     res.sendFile(__dirname + '/index.html');
+// };
+//const controlador = require('./routes/index.js')
+
+// app.get('/', (req, res)=>{
+//   res.render(
+//     'template', 
+//     { mensaje : 'hola mundo'}
+//   );
+// });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, (err) => {
