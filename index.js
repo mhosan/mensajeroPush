@@ -50,7 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //---------------------------------------------------------------------
 // conexión 
 //---------------------------------------------------------------------
-mongoose.connect(process.env.uriLocal, {
+mongoose.connect(process.env.uriRemota, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
