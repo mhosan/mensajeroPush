@@ -47,12 +47,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 //const db = mongoose.connection;
 //db.on('error',console.error.bind(console,'Mongo connection error: '));
 
-const uri ='mongodb+srv://admin:Ostruca1203@mensajes-push.mp8eq.mongodb.net/mensajes-push?retryWrites=true&w=majority';
-const uriLocal = 'mongodb://localhost/mensajes-push';
 //---------------------------------------------------------------------
 // conexión 
 //---------------------------------------------------------------------
-mongoose.connect(uriLocal, {
+mongoose.connect(process.env.uriLocal, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
@@ -63,12 +61,11 @@ mongoose.connect(uriLocal, {
   .catch(err => console.log(err));
 
 // --------------------------------------------------------------------
-// ----> Pagina de administ. del servidor mmo -------------------------
+// ----> Pagina de administ. del servidor -----------------------------
 // --------------------------------------------------------------------
 app.get('/'), (req, res) => {
     res.sendFile(__dirname + '/index.html');
 };
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, (err) => {
