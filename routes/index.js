@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const webpush = require('../webpush');
 var Schema = mongoose.Schema;
 const suscripcionesEsquema = require('../modelos/subsc');
+const mensajesEsquema = require('../modelos/msg');
 
 let pushSubscription;
 
@@ -13,15 +14,15 @@ router.post('/subscription', async (req, res) => {
     console.log('Llegó una suscripción: ', pushSubscription);
 
     // -- persistir ---------------------------------------------------
-    var suscripGuardar = suscripcionesEsquema({
-        fechaAlta: new Date(),
-        endpoint: pushSubscription.endpoint,
-        expirationTime: pushSubscription.expirationTime,
-        keys: {
-            p256dh: pushSubscription.keys.p256dh,
-            auth: pushSubscription.keys.auth
-        }
-    });
+    // var suscripGuardar = suscripcionesEsquema({
+    //     fechaAlta: new Date(),
+    //     endpoint: pushSubscription.endpoint,
+    //     expirationTime: pushSubscription.expirationTime,
+    //     keys: {
+    //         p256dh: pushSubscription.keys.p256dh,
+    //         auth: pushSubscription.keys.auth
+    //     }
+    // });
 
     //const resultado = await suscripcionesEsquema.find({});
     //console.log(resultado);
@@ -40,7 +41,6 @@ router.post('/subscription', async (req, res) => {
     //     .catch((err)=>{
     //         console.log(`Error: ${err}`);
     //     });
-
     suscripcionesEsquema.update({ 'keys.auth': pushSubscription.keys.auth },
         {
             $set:
@@ -57,10 +57,8 @@ router.post('/subscription', async (req, res) => {
         { upsert: true },
         function (err, result) {
             if (err) console.log(`Error: ${err}`);
-            console.log(`Guardado ok! ${result}`);
+            console.log(`Guardado de la subscripción ok! ${result}`);
         });
-
-
     // -- persistir ---------------------------------------------------
 
 });
@@ -68,13 +66,28 @@ router.post('/subscription', async (req, res) => {
 router.post('/new-message', async (req, res) => {
     const { message } = req.body;
     const payload = JSON.stringify({
-        title: 'Mi notificación personalizada, ajustando borrador',
+        title: 'Notificación personalizada, ajustando...',
         message: message
     });
     await webpush.sendNotification(pushSubscription, payload)  //<--sendNotification es una promesa
-        .then()
+        .then(() => {
+            var msgGuardar = new mensajesEsquema({
+                fechaAlta: new Date(),
+                msg: {
+                    title: (JSON.parse(payload)).title,
+                    message: (JSON.parse(payload)).message
+                },
+                keys: {
+                    p256dh: pushSubscription.keys.p256dh,
+                    auth: pushSubscription.keys.auth
+                }
+            });
+            msgGuardar.save((err) => {
+                if (err) console.log(`Hubo un error al guardar el msg. Error: ${err}`);
+                console.log('Guardado del msg en mongo ok!');
+            });
+        })
         .catch((err) => {
-
             if (err.statusCode === 410) {
                 console.log(`Error, la subscripción ya no es válida:  ${err}`);
             } else {
