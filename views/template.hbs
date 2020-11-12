@@ -6,34 +6,94 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container-fluid">
         <p class="text-center h4 pt-3 pb-3">Servidor push</p>
-        <div class="card" style="width: 40rem; margin-left: auto; margin-right: auto; ">
+        <div class="card" style="margin-left: auto; margin-right: auto; ">
             <div class="card-header text-center h5">
-                Enviar mensajes
+                Gestión mensajes
+                {{!-- <a class="nav-item nav-link" href="/sus">Detalle subscripciones</a> --}}
             </div>
             <div class="card-body" style="margin-left:auto; margin-right:auto;">
-                <h6 class="card-title" style="text-decoration:underline;">Detalle</h6>
-                <form id="miForm">
-                    <input type="text" placeholder="Escribir mensage" id="message" autofocus>
-                    <button class="btn btn-primary">Enviar</button>
+                <h6 class="card-title" style="text-decoration:underline;">Enviar mensaje</h6>
+
+                <form class="form-inline" id="miForm">
+                    <div class="form-group">
+                        <label class="mr-2" for="exampleFormControlSelect1">Seleccionar destinatario</label>
+                        <select class="form-control form-control-sm mr-2" id="selectId">
+                            {{#each suscriptos}}
+                            <option>{{this.keyAuth}}</option>
+                            {{/each}}
+                        </select>
+                        <input type="text" class="form-control form-control-sm mr-2" id="message"
+                            placeholder="Escribir mensage">
+                        {{!-- <input type="text" placeholder="Escribir mensage" id="message" autofocus> --}}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+                    {{!-- <button class="btn btn-primary">Enviar</button> --}}
                 </form>
-                <p class="card-text" id="totalPush"></p>
-                <ul class="list-group list-group-flush" id="listaPush" style="height: 90px; overflow: auto;">
-                </ul>
+
+                <div class="row ">
+                    <div class="col-4 mt-3">
+                        <p class="card-text" id="totalPush">Suscripciones</p>
+                        {{!-- <ul class="list-group list-group-flush" id="listaPush" style="height: 70px; overflow: auto;">
+                    {{#each suscriptos}}
+                    <li>
+                        {{this.keys.auth}}
+                    </li>
+                    {{/each}}
+                </ul>  
+                {{this.createdAt.toLocaleDateString('EU'))}};
+                --}}
+                        <div style="height: 200px; overflow: auto;">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                {{#each suscriptos}}
+                                <tr>
+                                    <td>{{this.keyAuth}}</td>
+                                    <td>{{this.fechaAlta}}</td>
+                                </tr>
+                                {{/each}}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-8 mt-3">
+                        <p class="card-text" id="totalPush">Mensajes</p>
+                        <div style="height: 200px; overflow: auto;">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Titulo</th>
+                                        <th>Mensaje</th>
+                                        <th>Destinatario - Auth</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                {{#each mensajes}}
+                                <tr>
+                                    <td>{{this.titulo}}</td>
+                                    <td>{{this.message}}</td>
+                                    <td>{{this.auth}}</td>
+                                    <td>{{this.fechaAlta}}</td>
+                                </tr>
+                                {{/each}}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="card-footer text-muted text-center font-italic">
                 &copy;Desarrollos ..., todos los derechos reservandos.
             </div>
         </div>
-        {{!-- <table class="table table-striped">
-            {{#each datos}}
-            <tr>
-                <td>{{this.id}}</td>
-            </tr>
-            {{/each}}
-        </table> --}}
+
     </div>
 </body>
-    <script src="./main.js"></script>
+<script src="./main.js"></script>
+
 </html>

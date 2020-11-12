@@ -1,13 +1,15 @@
 
 const form = document.querySelector('#miForm');
 const message = document.querySelector('#message');
+const destinatario = document.querySelector('#selectId');
 
 form.addEventListener('submit', e => {
     e.preventDefault();
     fetch('/new-message', {
         method: 'POST',
         body: JSON.stringify({
-            message: message.value
+            message: message.value,
+            destino: destinatario.value
         }),
         headers: {
             'Content-Type': 'application/json'
