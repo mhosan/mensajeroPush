@@ -114,8 +114,6 @@ router.post('/new-message', async (req, res) => {
     const { destino } = req.body;
     suscripcionesEsquema.find({'keys.auth' : destino}, {'fechaAlta':0,'_id':0,'__v':0}).exec((err, susDestino) => {
         if (err) console.log(`Error: ${err}`);
-        //expirationTime : susDestino[0].expirationTime,
-        
         subscripcionDestino = {
             "endpoint" : susDestino[0].endpoint,
             "keys" : {
@@ -123,7 +121,7 @@ router.post('/new-message', async (req, res) => {
                 "auth" : susDestino[0].keys.auth
             }
         };
-        console.log('subscripcion a enviar: ', subscripcionDestino);
+        //console.log('subscripcion a enviar: ', subscripcionDestino);
     });
     const payload = JSON.stringify({
         title: 'Notif. personal, ajustando...',
@@ -138,8 +136,8 @@ router.post('/new-message', async (req, res) => {
                     message: (JSON.parse(payload)).message
                 },
                 keys: {
-                    p256dh: subscripcionDestino.keys.p256dh, //pushSubscription.keys.p256dh,
-                    auth: subscripcionDestino.keys.auth //pushSubscription.keys.auth
+                    p256dh: subscripcionDestino.keys.p256dh, 
+                    auth: subscripcionDestino.keys.auth 
                 }
             });
             msgGuardar.save((err) => {
@@ -152,10 +150,9 @@ router.post('/new-message', async (req, res) => {
             if (err.statusCode === 410) {
                 console.log(`Error, la subscripción ya no es válida:  ${err}`);
             } else {
-                console.log(`Error-->:  ${err}`);
+                console.log(`Error al enviar el mensaje:  ${err}`);
             }
         });
 });
-
 module.exports = router;
 
