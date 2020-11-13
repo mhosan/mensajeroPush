@@ -50,7 +50,9 @@ router.get('/sus', (req, res) => {
     res.render('sus', { subscripcion: JSON.stringify(pushSubscription) });
 });
 
-
+//---------------------------------------------------------------------
+// recibiendo (y persistiendo) subscripción
+//---------------------------------------------------------------------
 router.post('/subscription', async (req, res) => {
     pushSubscription = req.body;
     res.status(200).json();
