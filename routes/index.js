@@ -128,7 +128,7 @@ router.post('/new-message', (req, res) => {
                 .catch((err) => {
                     if (err.statusCode === 410) {
                         console.log(`Error, la subscripción ya no es válida:  ${err.body}`);
-                        //res.render('template', { msgError: 'Error, la subscripción ya no es válida' });
+                        
                     } else {
                         console.log(`Error al enviar el mensaje:  ${err}`);
                     }
