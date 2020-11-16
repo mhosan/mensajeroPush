@@ -51,10 +51,23 @@ router.get('/', (req, res) => {
         });
 });
 
-router.get('/sus', (req, res) => {
-    res.render('sus', { subscripcion: JSON.stringify(pushSubscription) });
-});
+//---------------------------------------------------------------------
+// recibiendo y actualizando la subscripción
+//---------------------------------------------------------------------
+router.put('/', async (req, res)=>{
+    //console.log(req.body);
+    const filter = { 'keys.auth' : req.body.auth} ;
+    const actuMail = { 'mail': req.body.mail }
+    
+    await suscripcionesEsquema.findOneAndUpdate(filter, actuMail, {new: true},(err, doc)=>{
+        if(err) console.log(`Error al actualizar la subscripción con el mail: ${err}`);
 
+        console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
+        //res.send('[PUT]Saludos desde express');
+        res.status(200).json();
+    })
+});
+        
 //---------------------------------------------------------------------
 // recibiendo (y persistiendo) subscripción
 //---------------------------------------------------------------------
@@ -81,7 +94,6 @@ router.post('/subscription', (req, res) => {
             console.log(`Guardado de la subscripción ok! ${result}`);
         });
 });
-
 
 //---------------------------------------------------------------------
 // enviar mensaje

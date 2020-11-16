@@ -8,7 +8,8 @@ var subscripcionesSchema = new Schema({
     keys: {
         p256dh: String,
         auth: String
-    }
+    },
+    mail: String
 },
     { versionKey: false }
 );
