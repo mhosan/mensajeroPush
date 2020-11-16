@@ -30,6 +30,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
                     {{!-- <button class="btn btn-primary">Enviar</button> --}}
+                    <p>{{msgError}}</p>
                 </form>
 
                 <div class="row ">
@@ -45,7 +46,7 @@
                 {{this.createdAt.toLocaleDateString('EU'))}};
                 --}}
                         <div style="height: 200px; overflow: auto;">
-                            <table class="table table-striped">
+                            <table class="table table-striped small">
                                 <thead>
                                     <tr>
                                         <th>Id</th>
@@ -61,13 +62,14 @@
                             </table>
                         </div>
                     </div>
+                    
                     <div class="col-8 mt-3">
                         <p class="card-text" id="totalPush">Mensajes</p>
                         <div style="height: 200px; overflow: auto;">
-                            <table class="table table-striped">
+                            <table class="table table-striped small">
                                 <thead>
                                     <tr>
-                                        <th>Titulo</th>
+                                        <th>T&iacute;tulo</th>
                                         <th>Mensaje</th>
                                         <th>Destinatario - Auth</th>
                                         <th>Fecha</th>

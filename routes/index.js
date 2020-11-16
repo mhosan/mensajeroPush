@@ -104,9 +104,10 @@ router.post('/new-message', (req, res) => {
                     auth: susDestino[0].keys.auth
                 },
             };
-            console.log('subscripcion a enviar: ', subscripcionDestino);
+            //console.log('subscripcion a enviar: ', subscripcionDestino);
             webpush.sendNotification(subscripcionDestino, payload)
                 .then(() => {
+                    //setear el objeto mensaje a guardar
                     var msgGuardar = new mensajesEsquema({
                         fechaAlta: new Date(),
                         msg: {
@@ -118,6 +119,7 @@ router.post('/new-message', (req, res) => {
                             auth: subscripcionDestino.keys.auth
                         }
                     });
+                    //guardar el objeto mensaje
                     msgGuardar.save((err) => {
                         if (err) console.log(`Hubo un error al guardar el msg. Error: ${err}`);
                         console.log('Guardado del msg en mongo ok!');
@@ -126,6 +128,7 @@ router.post('/new-message', (req, res) => {
                 .catch((err) => {
                     if (err.statusCode === 410) {
                         console.log(`Error, la subscripción ya no es válida:  ${err.body}`);
+                        //res.render('template', { msgError: 'Error, la subscripción ya no es válida' });
                     } else {
                         console.log(`Error al enviar el mensaje:  ${err}`);
                     }
