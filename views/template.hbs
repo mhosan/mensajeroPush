@@ -30,11 +30,12 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
                     {{!-- <button class="btn btn-primary">Enviar</button> --}}
+                    <p>{{msgExito}}</p>
                     <p>{{msgError}}</p>
                 </form>
 
                 <div class="row ">
-                    <div class="col-4 mt-3">
+                    <div class="col-5 mt-3">
                         <p class="card-text" id="totalPush">Suscripciones</p>
                         {{!-- <ul class="list-group list-group-flush" id="listaPush" style="height: 70px; overflow: auto;">
                     {{#each suscriptos}}
@@ -50,12 +51,14 @@
                                 <thead>
                                     <tr>
                                         <th>Id</th>
+                                        <th>mail</th>
                                         <th>Fecha</th>
                                     </tr>
                                 </thead>
                                 {{#each suscriptos}}
                                 <tr>
                                     <td>{{this.keyAuth}}</td>
+                                    <td>{{this.mail}}</td>
                                     <td>{{this.fechaAlta}}</td>
                                 </tr>
                                 {{/each}}
@@ -63,7 +66,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-8 mt-3">
+                    <div class="col-7 mt-3">
                         <p class="card-text" id="totalPush">Mensajes</p>
                         <div style="height: 200px; overflow: auto;">
                             <table class="table table-striped small">

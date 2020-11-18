@@ -23,7 +23,8 @@ router.get('/', (req, res) => {
                 fechaLocal = fechaMongo.toLocaleString('es-AR');
                 const elementoJson = {
                     keyAuth: element.keys.auth,
-                    fechaAlta: fechaLocal
+                    fechaAlta: fechaLocal,
+                    mail : element.mail
                 };
                 jsonSuscrip.push(elementoJson);
             });
@@ -60,14 +61,25 @@ router.put('/', async (req, res)=>{
     const actuMail = { 'mail': req.body.mail }
     
     await suscripcionesEsquema.findOneAndUpdate(filter, actuMail, {new: true},(err, doc)=>{
-        if(err) console.log(`Error al actualizar la subscripción con el mail: ${err}`);
-
-        console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
-        //res.send('[PUT]Saludos desde express');
-        res.status(200).json();
+        if(err) {
+            console.log(`Error al actualizar la subscripción con el mail: ${err}`);
+            res.render('template', { msgExito: 'Todo bien!' });
+        } else{
+            console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
+            //res.redirect(req.get('referer'));
+            res.status(200).json();
+        }
     })
 });
         
+//---------------------------------------------------------------------
+// borrar clave auth
+//---------------------------------------------------------------------
+router.delete('/delete/:auth',(req, res)=>{
+    console.log(`Se recibió un pedido de borrar ${req.params.auth}`);
+    res.status(200).json('Se borró la clave...');
+});
+
 //---------------------------------------------------------------------
 // recibiendo (y persistiendo) subscripción
 //---------------------------------------------------------------------
@@ -131,6 +143,7 @@ router.post('/new-message', (req, res) => {
                             auth: subscripcionDestino.keys.auth
                         }
                     });
+                    res.status(200).json('Mensaje enviado');
                     //guardar el objeto mensaje
                     msgGuardar.save((err) => {
                         if (err) console.log(`Hubo un error al guardar el msg. Error: ${err}`);
