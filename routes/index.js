@@ -56,28 +56,59 @@ router.get('/', (req, res) => {
 // recibiendo y actualizando la subscripción
 //---------------------------------------------------------------------
 router.put('/', async (req, res)=>{
-    //console.log(req.body);
+    console.log(req.body);
     const filter = { 'keys.auth' : req.body.auth} ;
     const actuMail = { 'mail': req.body.mail }
     
     await suscripcionesEsquema.findOneAndUpdate(filter, actuMail, {new: true},(err, doc)=>{
         if(err) {
             console.log(`Error al actualizar la subscripción con el mail: ${err}`);
-            res.render('template', { msgExito: 'Todo bien!' });
+            res.status(555).json(`Error al actualizar la subscripción con el mail: ${err}`);
         } else{
             console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
-            //res.redirect(req.get('referer'));
-            res.status(200).json();
+            res.status(200).json('Actualización de la subscripción ok!');
         }
     })
 });
         
 //---------------------------------------------------------------------
-// borrar clave auth
+// borrar suscripcion. se recibe como param el codigo auth
+// OJO, esto se ejecuta desde una llamada request a esta API
 //---------------------------------------------------------------------
 router.delete('/delete/:auth',(req, res)=>{
-    console.log(`Se recibió un pedido de borrar ${req.params.auth}`);
-    res.status(200).json('Se borró la clave...');
+    // console.log(`Se recibió un pedido de borrar ${req.params.auth}`);
+    // suscripcionesEsquema.findOneAndDelete({"keys.auth" : req.params.auth}, (err)=>{
+    //     if (err) {
+    //         console.log(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
+    //         res.status(554).json(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
+    //     } else {
+    //         console.log(`Se borró la suscripción ${req.params.auth}`);
+    //         res.status(200).json(`Se borró la suscripción ${req.params.auth}`);
+    //     }
+    // });
+
+});
+//---------------------------------------------------------------------
+// borrar suscripcion. se recibe como param el codigo auth
+// OJO, esto se ejecuta desde el código main en el cliente!. NO es una
+// llamada API request
+//---------------------------------------------------------------------
+router.put('/borrar',(req, res)=>{
+    console.log(`Se recibió un pedido de borrar ${req.body.valor}`);
+    let buscar = JSON.stringify(req.body.valor);
+    buscar = buscar.slice(4,-3);
+    console.log(buscar);
+    // suscripcionesEsquema.findOne({"keys.auth" : buscar}, (err, respuesta)=>{
+    //     if(err) console.log(err);
+    //     console.log(respuesta);
+    // })
+    suscripcionesEsquema.remove({"keys.auth" : buscar}).exec()
+    .then((respuesta)=>{
+        console.log(`Se borró la suscripción ${req.body.valor}`);
+    })
+    .catch((err)=>{
+        console.log(`Hubo un error al borrar la suscripción ${req.body.valor}. Error: ${err}`);
+    })    
 });
 
 //---------------------------------------------------------------------
@@ -85,7 +116,7 @@ router.delete('/delete/:auth',(req, res)=>{
 //---------------------------------------------------------------------
 router.post('/subscription', (req, res) => {
     pushSubscription = req.body;
-    res.status(200).json();
+    
     console.log('Llegó una suscripción: ', pushSubscription);
     suscripcionesEsquema.update({ 'keys.auth': pushSubscription.keys.auth },
         {
@@ -100,10 +131,15 @@ router.post('/subscription', (req, res) => {
                 }
             }
         },
-        { upsert: true },
-        function (err, result) {
-            if (err) console.log(`Error: ${err}`);
-            console.log(`Guardado de la subscripción ok! ${result}`);
+        { upsert: true }, (err, result) => {
+            if (err) {
+                console.log(`Error: ${err}`);
+                //res.status(552).json(`Error al guardar la susbscripción. Error: ${err}`);
+            } else {
+                console.log(`Guardado de la subscripción ok!`);
+                //res.status(200).json(`La subscripción se guardó ok. ${result}`);
+                res.status(200).json();
+            }
         });
 });
 
@@ -153,16 +189,19 @@ router.post('/new-message', (req, res) => {
                 .catch((err) => {
                     if (err.statusCode === 410) {
                         console.log(`Error, la subscripción ya no es válida:  ${err.body}`);
-                        
+                        res.status(450).json(`Error, la subscripción ya no es válida`);
                     } else {
                         console.log(`Error al enviar el mensaje:  ${err}`);
+                        res.status(550).json(`Error al enviar el msg. Error: ${err}`);
                     }
                 });
         })
         .catch((err) => {
-            console.log(`Error en el find de la suscrip. destinataria del mensaje_: ${err}`);
+            console.log(`Error en el find de la suscrip. destinataria del mensaje: ${err}`);
+            res.status(551).json(`Error en el find de la suscrip. destinataria del mensaje. Error: ${err}`);
         });
 
 });
+
 module.exports = router;
 
