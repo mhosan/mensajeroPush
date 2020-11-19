@@ -76,16 +76,16 @@ router.put('/', async (req, res)=>{
 // OJO, esto se ejecuta desde una llamada request a esta API
 //---------------------------------------------------------------------
 router.delete('/delete/:auth',(req, res)=>{
-    // console.log(`Se recibió un pedido de borrar ${req.params.auth}`);
-    // suscripcionesEsquema.findOneAndDelete({"keys.auth" : req.params.auth}, (err)=>{
-    //     if (err) {
-    //         console.log(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
-    //         res.status(554).json(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
-    //     } else {
-    //         console.log(`Se borró la suscripción ${req.params.auth}`);
-    //         res.status(200).json(`Se borró la suscripción ${req.params.auth}`);
-    //     }
-    // });
+    console.log(`Se recibió un pedido de borrar ${req.params.auth}`);
+    suscripcionesEsquema.findOneAndDelete({"keys.auth" : req.params.auth}, (err)=>{
+        if (err) {
+            console.log(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
+            res.status(554).json(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
+        } else {
+            console.log(`Se borró la suscripción ${req.params.auth}`);
+            res.status(200).json(`Se borró la suscripción ${req.params.auth}`);
+        }
+    });
 
 });
 //---------------------------------------------------------------------
@@ -95,8 +95,8 @@ router.delete('/delete/:auth',(req, res)=>{
 //---------------------------------------------------------------------
 router.put('/borrar',(req, res)=>{
     console.log(`Se recibió un pedido de borrar ${req.body.valor}`);
-    let buscar = JSON.stringify(req.body.valor);
-    buscar = buscar.slice(4,-3);
+    let buscar = JSON.stringify(req.body.valor); //convertir el objeto recibido en string
+    buscar = buscar.slice(4,-3);  //limpiarlo
     console.log(buscar);
     // suscripcionesEsquema.findOne({"keys.auth" : buscar}, (err, respuesta)=>{
     //     if(err) console.log(err);
