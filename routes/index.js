@@ -62,11 +62,7 @@ router.get('/', (req, res) => {
 router.post('/subscription', (req, res) => {
     pushSubscription = req.body;
 
-    // app.get('/', function (req, res) {
-    //     console.log(req.ipInfo);
-    // });
-var ip = req.ipInfo;
-    console.log('Llegó una suscripción: ', pushSubscription, ' desde: ', ip);
+    console.log('Llegó una suscripción: ', pushSubscription);
     suscripcionesEsquema.update({ 'keys.auth': pushSubscription.keys.auth },
         {
             $set:
@@ -87,7 +83,6 @@ var ip = req.ipInfo;
             } else {
                 console.log(`Guardado de la subscripción ok!`);
                 //res.status(200).json(`La subscripción se guardó ok. ${result}`);
-                res.status(200).json();
             }
         });
 });
@@ -106,8 +101,8 @@ router.put('/', async (req, res) => {
             console.log(`Error al actualizar la subscripción con el mail: ${err}`);
             res.status(555).json(`Error al actualizar la subscripción con el mail: ${err}`);
         } else {
-            console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
-            res.status(200).json('Actualización de la subscripción ok!');
+            console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}, ip: ${ip}`);
+            res.status(200).json(`Actualización de la subscripción ok!`);
         }
     })
 });
