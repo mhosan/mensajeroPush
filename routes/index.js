@@ -62,7 +62,11 @@ router.get('/', (req, res) => {
 router.post('/subscription', (req, res) => {
     pushSubscription = req.body;
 
-    console.log('Llegó una suscripción: ', pushSubscription);
+    // app.get('/', function (req, res) {
+    //     console.log(req.ipInfo);
+    // });
+var ip = req.ipInfo;
+    console.log('Llegó una suscripción: ', pushSubscription, ' desde: ', ip);
     suscripcionesEsquema.update({ 'keys.auth': pushSubscription.keys.auth },
         {
             $set:
@@ -125,6 +129,7 @@ router.delete('/delete/:auth', (req, res) => {
     });
 
 });
+
 //---------------------------------------------------------------------
 // borrar suscripcion. se recibe como param el codigo auth
 // OJO, esto se ejecuta desde el código main en el cliente!. NO es una

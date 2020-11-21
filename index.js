@@ -9,6 +9,10 @@ const app = express();
 
 //middleware
 //app.set('trust proxy', true);
+
+const expressip = require('express-ip');
+app.use(expressip().getIpInfoMiddleware);
+
 app.use(cors());
 app.use(morgan('dev')); //ver por consola las peticiones que llegan al server
 app.use(express.urlencoded({extended: false}));  //decodif. los datos que llegan desde un form
