@@ -72,18 +72,24 @@
                             <table class="table table-striped small">
                                 <thead>
                                     <tr>
-                                        <th>T&iacute;tulo</th>
-                                        <th>Mensaje</th>
-                                        <th>Destinatario - Auth</th>
-                                        <th>Fecha</th>
+                                        <th>title</th>
+                                        <th>bodyMessage</th>
+                                        <th>iconImage</th>
+                                        <th>date</th>
+                                        <th>category</th>
+                                        <th>status</th>
+                                        <th>auth</th>
                                     </tr>
                                 </thead>
                                 {{#each mensajes}}
                                 <tr>
-                                    <td>{{this.titulo}}</td>
-                                    <td>{{this.message}}</td>
+                                    <td>{{this.title}}</td>
+                                    <td>{{this.bodyMessage}}</td>
+                                    <td>{{this.iconImage}}</td>
+                                    <td>{{this.date}}</td>
+                                    <td>{{this.category}}</td>
+                                    <td>{{this.status}}</td>
                                     <td>{{this.auth}}</td>
-                                    <td>{{this.fechaAlta}}</td>
                                 </tr>
                                 {{/each}}
                             </table>

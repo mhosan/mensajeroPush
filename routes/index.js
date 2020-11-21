@@ -24,20 +24,24 @@ router.get('/', (req, res) => {
                 const elementoJson = {
                     keyAuth: element.keys.auth,
                     fechaAlta: fechaLocal,
-                    mail : element.mail
+                    mail: element.mail
                 };
                 jsonSuscrip.push(elementoJson);
             });
             mensajesEsquema.find().exec()
                 .then((msgs) => {
                     msgs.forEach(itemMensaje => {
-                        let fechaMsg = new Date(itemMensaje.fechaAlta);
+                        let fechaMsg = new Date(itemMensaje.date);
                         fechaMsgLocal = fechaMsg.toLocaleString('es-AR');
                         const elementoMsgJson = {
-                            titulo: itemMensaje.msg.title,
-                            message: itemMensaje.msg.message,
-                            auth: itemMensaje.keys.auth,
-                            fechaAlta: fechaMsgLocal
+                            title: itemMensaje.title,
+                            bodyMessage: itemMensaje.bodyMessage,
+                            iconImage: itemMensaje.iconImage,
+                            date: fechaMsgLocal,
+                            category: itemMensaje.category,
+                            status: itemMensaje.status,
+                            auth: itemMensaje.auth,
+                            
                         };
                         jsonMsg.push(elementoMsgJson);
                     })
@@ -53,70 +57,11 @@ router.get('/', (req, res) => {
 });
 
 //---------------------------------------------------------------------
-// recibiendo y actualizando la subscripción
-//---------------------------------------------------------------------
-router.put('/', async (req, res)=>{
-    console.log(req.body);
-    const filter = { 'keys.auth' : req.body.auth} ;
-    const actuMail = { 'mail': req.body.mail }
-    
-    await suscripcionesEsquema.findOneAndUpdate(filter, actuMail, {new: true},(err, doc)=>{
-        if(err) {
-            console.log(`Error al actualizar la subscripción con el mail: ${err}`);
-            res.status(555).json(`Error al actualizar la subscripción con el mail: ${err}`);
-        } else{
-            console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
-            res.status(200).json('Actualización de la subscripción ok!');
-        }
-    })
-});
-        
-//---------------------------------------------------------------------
-// borrar suscripcion. se recibe como param el codigo auth
-// OJO, esto se ejecuta desde una llamada request a esta API
-//---------------------------------------------------------------------
-router.delete('/delete/:auth',(req, res)=>{
-    console.log(`Se recibió un pedido de borrar ${req.params.auth}`);
-    suscripcionesEsquema.findOneAndDelete({"keys.auth" : req.params.auth}, (err)=>{
-        if (err) {
-            console.log(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
-            res.status(554).json(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
-        } else {
-            console.log(`Se borró la suscripción ${req.params.auth}`);
-            res.status(200).json(`Se borró la suscripción ${req.params.auth}`);
-        }
-    });
-
-});
-//---------------------------------------------------------------------
-// borrar suscripcion. se recibe como param el codigo auth
-// OJO, esto se ejecuta desde el código main en el cliente!. NO es una
-// llamada API request
-//---------------------------------------------------------------------
-router.put('/borrar',(req, res)=>{
-    console.log(`Se recibió un pedido de borrar ${req.body.valor}`);
-    let buscar = JSON.stringify(req.body.valor); //convertir el objeto recibido en string
-    buscar = buscar.slice(4,-3);  //limpiarlo
-    console.log(buscar);
-    // suscripcionesEsquema.findOne({"keys.auth" : buscar}, (err, respuesta)=>{
-    //     if(err) console.log(err);
-    //     console.log(respuesta);
-    // })
-    suscripcionesEsquema.remove({"keys.auth" : buscar}).exec()
-    .then((respuesta)=>{
-        console.log(`Se borró la suscripción ${req.body.valor}`);
-    })
-    .catch((err)=>{
-        console.log(`Hubo un error al borrar la suscripción ${req.body.valor}. Error: ${err}`);
-    })    
-});
-
-//---------------------------------------------------------------------
 // recibiendo (y persistiendo) subscripción
 //---------------------------------------------------------------------
 router.post('/subscription', (req, res) => {
     pushSubscription = req.body;
-    
+
     console.log('Llegó una suscripción: ', pushSubscription);
     suscripcionesEsquema.update({ 'keys.auth': pushSubscription.keys.auth },
         {
@@ -143,6 +88,66 @@ router.post('/subscription', (req, res) => {
         });
 });
 
+
+//---------------------------------------------------------------------
+// recibiendo y actualizando la subscripción
+//---------------------------------------------------------------------
+router.put('/', async (req, res) => {
+    console.log(req.body);
+    const filter = { 'keys.auth': req.body.auth };
+    const actuMail = { 'mail': req.body.mail }
+
+    await suscripcionesEsquema.findOneAndUpdate(filter, actuMail, { new: true }, (err, doc) => {
+        if (err) {
+            console.log(`Error al actualizar la subscripción con el mail: ${err}`);
+            res.status(555).json(`Error al actualizar la subscripción con el mail: ${err}`);
+        } else {
+            console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
+            res.status(200).json('Actualización de la subscripción ok!');
+        }
+    })
+});
+
+//---------------------------------------------------------------------
+// borrar suscripcion. se recibe como param el codigo auth
+// OJO, esto se ejecuta desde una llamada request a esta API
+//---------------------------------------------------------------------
+router.delete('/delete/:auth', (req, res) => {
+    console.log(`Se recibió un pedido de borrar ${req.params.auth}`);
+    suscripcionesEsquema.findOneAndDelete({ "keys.auth": req.params.auth }, (err) => {
+        if (err) {
+            console.log(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
+            res.status(554).json(`Hubo un error al borrar la suscripción ${req.params.auth}. Error: ${err}`);
+        } else {
+            console.log(`Se borró la suscripción ${req.params.auth}`);
+            res.status(200).json(`Se borró la suscripción ${req.params.auth}`);
+        }
+    });
+
+});
+//---------------------------------------------------------------------
+// borrar suscripcion. se recibe como param el codigo auth
+// OJO, esto se ejecuta desde el código main en el cliente!. NO es una
+// llamada API request
+//---------------------------------------------------------------------
+router.put('/borrar', (req, res) => {
+    console.log(`Se recibió un pedido de borrar ${req.body.valor}`);
+    let buscar = JSON.stringify(req.body.valor); //convertir el objeto recibido en string
+    buscar = buscar.slice(4, -3);  //limpiarlo
+    console.log(buscar);
+    // suscripcionesEsquema.findOne({"keys.auth" : buscar}, (err, respuesta)=>{
+    //     if(err) console.log(err);
+    //     console.log(respuesta);
+    // })
+    suscripcionesEsquema.remove({ "keys.auth": buscar }).exec()
+        .then((respuesta) => {
+            console.log(`Se borró la suscripción ${req.body.valor}`);
+        })
+        .catch((err) => {
+            console.log(`Hubo un error al borrar la suscripción ${req.body.valor}. Error: ${err}`);
+        })
+});
+
 //---------------------------------------------------------------------
 // enviar mensaje
 //---------------------------------------------------------------------
@@ -151,7 +156,7 @@ router.post('/new-message', (req, res) => {
     const { destino } = req.body;
 
     const payload = JSON.stringify({
-        title: 'Notif. personal, ajustando...',
+        title: 'Notif. Peygol',
         message: message
     });
 
@@ -169,15 +174,13 @@ router.post('/new-message', (req, res) => {
                 .then(() => {
                     //setear el objeto mensaje a guardar
                     var msgGuardar = new mensajesEsquema({
-                        fechaAlta: new Date(),
-                        msg: {
-                            title: (JSON.parse(payload)).title,
-                            message: (JSON.parse(payload)).message
-                        },
-                        keys: {
-                            p256dh: subscripcionDestino.keys.p256dh,
-                            auth: subscripcionDestino.keys.auth
-                        }
+                        title: (JSON.parse(payload)).title,
+                        bodyMessage: (JSON.parse(payload)).message,
+                        iconImage: 'nada',
+                        date: new Date(),
+                        category: 99,
+                        status: 99,
+                        auth: subscripcionDestino.keys.auth
                     });
                     res.status(200).json('Mensaje enviado');
                     //guardar el objeto mensaje

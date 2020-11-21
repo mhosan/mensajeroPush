@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const app = express();
 
 //middleware
+//app.set('trust proxy', true);
 app.use(cors());
 app.use(morgan('dev')); //ver por consola las peticiones que llegan al server
 app.use(express.urlencoded({extended: false}));  //decodif. los datos que llegan desde un form

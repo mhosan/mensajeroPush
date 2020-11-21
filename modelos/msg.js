@@ -2,15 +2,13 @@ const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var msgSchema = new Schema({
-    fechaAlta: Date,
-    msg: {
-        title: String,
-        message: String
-    },
-    keys: {
-        p256dh: String,
-        auth: String
-    }
+    title: String,
+    bodyMessage: String,
+    iconImage: String,
+    date: Date,
+    category: Number,
+    status: Number,
+    auth: String
 },
     { versionKey: false }
 );
