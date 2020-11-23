@@ -5,6 +5,7 @@ const webpush = require('../webpush');
 var Schema = mongoose.Schema;
 const suscripcionesEsquema = require('../modelos/subsc');
 const mensajesEsquema = require('../modelos/msg');
+const categoriasEsquema = require('../modelos/category');
 
 let pushSubscription;
 let subscripcionDestino;
@@ -15,9 +16,8 @@ let subscripcionDestino;
 router.get('/', (req, res) => {
     let jsonSuscrip = [];
     let jsonMsg = [];
-    suscripcionesEsquema.find().exec()
+    suscripcionesEsquema.find().exec()  //<--leer subscripciones
         .then((suscrip) => {
-            //console.log(suscrip);
             suscrip.forEach(element => {
                 let fechaMongo = new Date(element.fechaAlta);
                 fechaLocal = fechaMongo.toLocaleString('es-AR');
@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
                 };
                 jsonSuscrip.push(elementoJson);
             });
-            mensajesEsquema.find().exec()
+            mensajesEsquema.find().exec()  //<--leer mensajes
                 .then((msgs) => {
                     msgs.forEach(itemMensaje => {
                         let fechaMsg = new Date(itemMensaje.date);
@@ -46,6 +46,13 @@ router.get('/', (req, res) => {
                         jsonMsg.push(elementoMsgJson);
                     })
                     res.render('template', { suscriptos: jsonSuscrip, mensajes: jsonMsg });
+                    // let unaCategoria = new categoriasEsquema(
+                    //     {
+                    //     catIndex : 5,
+                    //     catLabel : 'Remates',
+                    //     catDescrip : 'El tema de los remates'
+                    // });
+                    // unaCategoria.save();
                 })
                 .catch((err) => {
                     console.log(`Error en el find de mensajes: ${err}`);
@@ -101,7 +108,7 @@ router.put('/', async (req, res) => {
             console.log(`Error al actualizar la subscripción con el mail: ${err}`);
             res.status(555).json(`Error al actualizar la subscripción con el mail: ${err}`);
         } else {
-            console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}, ip: ${ip}`);
+            console.log(`doc.keys.auth: ${doc.keys.auth}, doc.mail: ${doc.mail}`);
             res.status(200).json(`Actualización de la subscripción ok!`);
         }
     })
