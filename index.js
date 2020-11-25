@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const app = express();
 
 //------------------middleware-----------------------------------------
-//app.set('trust proxy', true);
+// app.set('trust proxy', true);
 // proxy con la libreria cors:
 // que el servidor escuche en todos los puertos: app.use(cors({}));
 // Escuchar un puerto: app.use(cors({origin: 'http://localhost:4200'}));
