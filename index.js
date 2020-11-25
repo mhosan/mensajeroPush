@@ -7,11 +7,24 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-//middleware
+//------------------middleware-----------------------------------------
 //app.set('trust proxy', true);
-app.use(cors());
+// proxy con la libreria cors:
+// que el servidor escuche en todos los puertos: app.use(cors({}));
+// Escuchar un puerto: app.use(cors({origin: 'http://localhost:4200'}));
+//app.use(cors({origin :'http://localhost:3000/subscription'}));
+//app.use(cors());
+// Configurar cabeceras y cors
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+       res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+       res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+       res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+  next();
+});
+
 app.use(morgan('dev')); //ver por consola las peticiones que llegan al server
-app.use(express.urlencoded({extended: false}));  //decodif. los datos que llegan desde un form
+app.use(express.urlencoded({ extended: false }));  //decodif. los datos que llegan desde un form
 app.use(express.json()); //convertir los datos que llegan del front de peticiones http a json
 
 //Routes
@@ -19,20 +32,6 @@ app.use(require('./routes/index.js'));
 
 //static content
 app.use(express.static(path.join(__dirname, 'public')));
-
-// ----> Proxy --------------------------------------------------------
-// que el servidor escuche en todos los puertos: app.use(cors({}));
-// Escuchar un puerto: app.use(cors({origin: 'http://localhost:4200'}));
-//app.use(cors({origin :'http://localhost:3000/subscription'}));
-//app.use(cors());
-// Configurar cabeceras y cors
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', '*');
-//     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
-//     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-//     res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
-//     next();
-// });
 
 // --------------------------------------------------------------------
 // ----> Seteo de view engine -----------------------------------------
@@ -52,9 +51,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // conexión 
 //---------------------------------------------------------------------
 mongoose.connect(process.env.uriRemota, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
   .then(() => {
     console.log('MongoDB Connected…');
     const db = mongoose.connection;
@@ -64,7 +63,7 @@ mongoose.connect(process.env.uriRemota, {
 // --------------------------------------------------------------------
 // ----> Pagina de administ. del servidor -----------------------------
 // --------------------------------------------------------------------
-app.set('view engine','hbs');
+app.set('view engine', 'hbs');
 
 // app.get('/'), (req, res) => {
 //     res.sendFile(__dirname + '/index.html');
@@ -80,6 +79,6 @@ app.set('view engine','hbs');
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, (err) => {
-    if (err) throw err;
-    console.log(`Escuchando en el puerto.. > ${PORT}`);
+  if (err) throw err;
+  console.log(`Escuchando en el puerto.. > ${PORT}`);
 });
