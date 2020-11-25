@@ -12,8 +12,8 @@ const app = express();
 // proxy con la libreria cors:
 // que el servidor escuche en todos los puertos: app.use(cors({}));
 // Escuchar un puerto: app.use(cors({origin: 'http://localhost:4200'}));
-//app.use(cors({origin :'http://localhost:3000/subscription'}));
-//app.use(cors());
+// app.use(cors({origin :'http://localhost:3000/subscription'}));
+// app.use(cors());
 // Configurar cabeceras y cors
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
