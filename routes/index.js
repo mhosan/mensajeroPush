@@ -262,7 +262,7 @@ router.post('/new-message', (req, res) => {
         })
         .catch((err) => {
             console.log(`Error al buscar el auth a partir del mail`);
-            res.status(551).json(`Error en el find de la suscrip. destinataria del mensaje. Error: ${err}`);
+            res.status(551).json(`Error en el find de la suscripcion destinataria del mensaje. Error: ${err}`);
         });
 });
 
