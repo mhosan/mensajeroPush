@@ -155,10 +155,11 @@ router.put('/borrar', (req, res) => {
         })
 });
 
+
 //---------------------------------------------------------------------
 // mh, 24/11/20
-// Enviar mensaje
-// Recibe cuatro parametros:
+// Enviar mensaje,
+// recibe cuatro parametros:
 // 1 mail,          es el mail del destinatario. Entrar en la tabla suscrip
 //                  con el mail y buscar el identificador "auth" correspond.
 // 2 titulo,        es el titulo de la notificación push
@@ -166,12 +167,14 @@ router.put('/borrar', (req, res) => {
 // 4 idcat          es un int con la categoria de notificación push. Entrar en la tabla
 //                  categorias con el int y adjuntar a la notif el texto de 
 //                  la categoria.
-// 5 status         Se habló de un item "status" pero por ahora no está definido.
+// 5 status ?       Se habló de un item "status" pero por ahora no está definido.
 //---------------------------------------------------------------------
 router.post('/new-message', (req, res) => {
-    //verificar parametros
-    const parametros = Object.keys(req.body).length;
     let postError = "";
+    const cantidadParametros = Object.keys(req.body).length;
+    if (!cantidadParametros == 4) {
+        postError = postError + " No hay cuatro parametros. ";
+    }
     if (!req.body.mail) {
         postError = postError + " El Json no trae el elemento mail.";
     }
@@ -184,69 +187,83 @@ router.post('/new-message', (req, res) => {
     if (!req.body.idcat) {
         postError = postError + " El Json no trae el elemento idcat.";
     }
-    if (postError == ""){
-        console.log('joya');
-    } else {
+    if (!postError == "") {
         console.log(postError);
+        res.status(420).json(`Error: ${postError}`);
+        return
     }
-
-
-
-    res.status(200).json(`Nada`);
-    // const { mail } = req.body;
-    // const { titulo } = req.body;
-    // const { msg } = req.body;
-    // const { idcat } = req.body;
-
-    // const payload = JSON.stringify({
-    //     title: 'Notif. Peygol',
-    //     message: msg
-    // });
-
-    // suscripcionesEsquema.find({ 'keys.auth': destino }).exec()
-    //     .then((susDestino) => {
-    //         subscripcionDestino = {
-    //             endpoint: susDestino[0].endpoint,
-    //             keys: {
-    //                 p256dh: susDestino[0].keys.p256dh,
-    //                 auth: susDestino[0].keys.auth
-    //             },
-    //         };
-    //         //console.log('subscripcion a enviar: ', subscripcionDestino);
-    //         webpush.sendNotification(subscripcionDestino, payload)
-    //             .then(() => {
-    //                 //setear el objeto mensaje a guardar
-    //                 var msgGuardar = new mensajesEsquema({
-    //                     title: (JSON.parse(payload)).title,
-    //                     bodyMessage: (JSON.parse(payload)).message,
-    //                     iconImage: 'nada',
-    //                     date: new Date(),
-    //                     category: 99,
-    //                     status: 99,
-    //                     auth: subscripcionDestino.keys.auth
-    //                 });
-    //                 res.status(200).json('Mensaje enviado');
-    //                 //guardar el objeto mensaje
-    //                 msgGuardar.save((err) => {
-    //                     if (err) console.log(`Hubo un error al guardar el msg. Error: ${err}`);
-    //                     console.log('Guardado del msg en mongo ok!');
-    //                 });
-    //             })
-    //             .catch((err) => {
-    //                 if (err.statusCode === 410) {
-    //                     console.log(`Error, la subscripción ya no es válida:  ${err.body}`);
-    //                     res.status(450).json(`Error, la subscripción ya no es válida`);
-    //                 } else {
-    //                     console.log(`Error al enviar el mensaje:  ${err}`);
-    //                     res.status(550).json(`Error al enviar el msg. Error: ${err}`);
-    //                 }
-    //             });
-    //     })
-    //     .catch((err) => {
-    //         console.log(`Error en el find de la suscrip. destinataria del mensaje: ${err}`);
-    //         res.status(551).json(`Error en el find de la suscrip. destinataria del mensaje. Error: ${err}`);
-    //     });
-
+    const { mail } = req.body;
+    const { titulo } = req.body;
+    const { msg } = req.body;
+    const { idcat } = req.body;
+    //buscar el auth a partir del mail:
+    suscripcionesEsquema.find({ 'mail': mail }).exec()
+        .then((doc) => {
+            const cant = doc.length;
+            console.log(`Cantidad de elementos ${cant}`);
+            if(cant == 0){
+                console.log('no se encontró ese mail');
+                return;
+            }
+            
+            doc.forEach(element => {
+                //encontrada/s la/s subscripcion/nes, recuperar el auth para armar el payload, luego
+                //armar el objeto subscripcion a utilizar para enviar el msg y armar un objeto
+                //msg para persistir
+                const payload = JSON.stringify({
+                    title: titulo,
+                    bodyMessage: msg,
+                    iconImage: '-',
+                    date: new Date(),
+                    category: idcat,
+                    status: 99,
+                    auth: element.keys.auth
+                });
+                //armar el objeto subscripcion para enviar el mensaje con webpush
+                subscripcionDestino = {
+                    endpoint: element.endpoint,
+                    keys: {
+                        p256dh: element.keys.p256dh,
+                        auth: element.keys.auth
+                    }
+                };
+                //con la subscripción y con el payload enviar el mensaje
+                webpush.sendNotification(subscripcionDestino, payload)
+                    //el mensaje se envió bien
+                    .then(() => {
+                        // setear el objeto mensaje a guardar
+                        var msgGuardar = new mensajesEsquema({
+                            title: (JSON.parse(payload)).title,
+                            bodyMessage: (JSON.parse(payload)).message,
+                            iconImage: (JSON.parse(payload)).iconImage,
+                            date: (JSON.parse(payload)).date,
+                            category: (JSON.parse(payload)).category,
+                            status: (JSON.parse(payload)).status,
+                            auth: (JSON.parse(payload)).auth
+                        });
+                        res.status(200).json('Mensaje enviado');
+                        //guardar el objeto mensaje
+                        msgGuardar.save((err) => {
+                            if (err) console.log(`Hubo un error al guardar el msg. Error: ${err}`);
+                            console.log('Guardado del msg en mongo ok!');
+                        });
+                    })
+                    .catch((err) => {
+                        //error al enviar el mensaje
+                        if (err.statusCode === 410) {
+                            console.log(`Error, la subscripción ya no es válida:  ${err.body}`);
+                            res.status(450).json(`Error, la subscripción ya no es válida`);
+                        } else {
+                            console.log(`Error al enviar el mensaje:  ${err}`);
+                            res.status(550).json(`Error al enviar el msg. Error: ${err}`);
+                        }
+                    })
+            })
+        })
+        .catch((err) => {
+            console.log(`Error al buscar el auth a partir del mail`);
+            res.status(551).json(`Error en el find de la suscrip. destinataria del mensaje. Error: ${err}`);
+        });
 });
 
 module.exports = router;
