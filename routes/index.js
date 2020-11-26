@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
                 };
                 jsonSuscrip.push(elementoJson);
             });
-            mensajesEsquema.find().exec()  //<--leer mensajes
+            mensajesEsquema.find().sort({'date' : -1}).exec()  //<--leer mensajes
                 .then((msgs) => {
                     msgs.forEach(itemMensaje => {
                         let fechaMsg = new Date(itemMensaje.date);
@@ -210,14 +210,19 @@ router.post('/new-message', (req, res) => {
                 //encontrada/s la/s subscripcion/nes, recuperar el auth para armar el payload, luego
                 //armar el objeto subscripcion a utilizar para enviar el msg y armar un objeto
                 //msg para persistir
+                // const payload = JSON.stringify({
+                //     title: titulo,
+                //     message: msg,
+                //     iconImage: '-',
+                //     date: new Date(),
+                //     category: idcat,
+                //     status: 99,
+                //     auth: element.keys.auth
+                // });
                 const payload = JSON.stringify({
                     title: titulo,
-                    bodyMessage: msg,
-                    iconImage: '-',
-                    date: new Date(),
-                    category: idcat,
-                    status: 99,
-                    auth: element.keys.auth
+                    body: msg,
+                    date: new Date()
                 });
                 //armar el objeto subscripcion para enviar el mensaje con webpush
                 subscripcionDestino = {
@@ -234,12 +239,12 @@ router.post('/new-message', (req, res) => {
                         // setear el objeto mensaje a guardar
                         var msgGuardar = new mensajesEsquema({
                             title: (JSON.parse(payload)).title,
-                            bodyMessage: (JSON.parse(payload)).message,
-                            iconImage: (JSON.parse(payload)).iconImage,
+                            bodyMessage: (JSON.parse(payload)).body,
+                            //iconImage: (JSON.parse(payload)).iconImage,
                             date: (JSON.parse(payload)).date,
-                            category: (JSON.parse(payload)).category,
-                            status: (JSON.parse(payload)).status,
-                            auth: (JSON.parse(payload)).auth
+                            //category: (JSON.parse(payload)).category,
+                            //status: (JSON.parse(payload)).status,
+                            //auth: (JSON.parse(payload)).auth
                         });
                         res.status(200).json('Mensaje enviado');
                         //guardar el objeto mensaje
