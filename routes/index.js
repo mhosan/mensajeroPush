@@ -210,7 +210,7 @@ router.post('/new-message', (req, res) => {
                 //encontrada/s la/s subscripcion/nes, recuperar el auth para armar el payload, luego
                 //armar el objeto subscripcion a utilizar para enviar el msg y armar un objeto
                 //msg para persistir
-                // const payload = JSON.stringify({
+                //const payload = JSON.stringify({
                 //     title: titulo,
                 //     message: msg,
                 //     iconImage: '-',
@@ -221,8 +221,7 @@ router.post('/new-message', (req, res) => {
                 // });
                 const payload = JSON.stringify({
                     title: titulo,
-                    body: msg,
-                    date: new Date()
+                    message: msg
                 });
                 //armar el objeto subscripcion para enviar el mensaje con webpush
                 subscripcionDestino = {
@@ -239,13 +238,14 @@ router.post('/new-message', (req, res) => {
                         // setear el objeto mensaje a guardar
                         var msgGuardar = new mensajesEsquema({
                             title: (JSON.parse(payload)).title,
-                            bodyMessage: (JSON.parse(payload)).body,
-                            //iconImage: (JSON.parse(payload)).iconImage,
-                            date: (JSON.parse(payload)).date,
-                            //category: (JSON.parse(payload)).category,
-                            //status: (JSON.parse(payload)).status,
-                            //auth: (JSON.parse(payload)).auth
+                            bodyMessage: msg,
+                            iconImage: '-',
+                            date: new Date(),
+                            category: 99,
+                            status: 99,
+                            auth: element.keys.auth
                         });
+                        console.log('el mensaje se envió bien!');
                         res.status(200).json('Mensaje enviado');
                         //guardar el objeto mensaje
                         msgGuardar.save((err) => {
