@@ -210,15 +210,6 @@ router.post('/new-message', (req, res) => {
                 //encontrada/s la/s subscripcion/nes, recuperar el auth para armar el payload, luego
                 //armar el objeto subscripcion a utilizar para enviar el msg y armar un objeto
                 //msg para persistir
-                //const payload = JSON.stringify({
-                //     title: titulo,
-                //     message: msg,
-                //     iconImage: '-',
-                //     date: new Date(),
-                //     category: idcat,
-                //     status: 99,
-                //     auth: element.keys.auth
-                // });
                 const payload = JSON.stringify({
                     title: titulo,
                     message: msg
