@@ -21,10 +21,17 @@ router.get('/', (req, res) => {
             suscrip.forEach(element => {
                 let fechaMongo = new Date(element.fechaAlta);
                 fechaLocal = fechaMongo.toLocaleString('es-AR');
+                let correo = element.mail;
+                if( typeof(correo) === 'undefined'){
+                    correo = "---> sin correo <---"
+                } else {
+                    correo = element.mail;
+                }
+                console.log(`correo: ${correo}`);
                 const elementoJson = {
                     keyAuth: element.keys.auth,
                     fechaAlta: fechaLocal,
-                    mail: element.mail
+                    mail: correo
                 };
                 jsonSuscrip.push(elementoJson);
             });
@@ -172,9 +179,6 @@ router.put('/borrar', (req, res) => {
 router.post('/new-message', (req, res) => {
     let postError = "";
     const cantidadParametros = Object.keys(req.body).length;
-    if (!cantidadParametros == 4) {
-        postError = postError + " No hay cuatro parametros. ";
-    }
     if (!req.body.mail) {
         postError = postError + " El Json no trae el elemento mail.";
     }
@@ -192,6 +196,18 @@ router.post('/new-message', (req, res) => {
         res.status(420).json(`Error: ${postError}`);
         return
     }
+    //buscar la categoria a partir del idcat
+    const idCategoria = req.body.idcat;
+    console.log(req.body.idcat);
+    categoriasEsquema.find({'catIndex' : idCategoria}).exec()
+    .then((doc)=>{
+        const categoriaTexto = doc[0].catLabel;
+        console.log(`Categoria: ${categoriaTexto}`);
+    })
+    .catch((err)=>{
+        console.log('error en el find que busca la categoria');
+    });
+    
     const { mail } = req.body;
     const { titulo } = req.body;
     const { msg } = req.body;
@@ -203,17 +219,20 @@ router.post('/new-message', (req, res) => {
             console.log(`Cantidad de elementos ${cant}`);
             if(cant == 0){
                 console.log('no se encontró ese mail');
+                res.status(550).json(`No se encontró ese mail en la db`);
                 return;
             }
-            
             doc.forEach(element => {
                 //encontrada/s la/s subscripcion/nes, recuperar el auth para armar el payload, luego
                 //armar el objeto subscripcion a utilizar para enviar el msg y armar un objeto
                 //msg para persistir
+
+                //payload
                 const payload = JSON.stringify({
                     title: titulo,
                     message: msg
                 });
+
                 //armar el objeto subscripcion para enviar el mensaje con webpush
                 subscripcionDestino = {
                     endpoint: element.endpoint,
@@ -222,6 +241,7 @@ router.post('/new-message', (req, res) => {
                         auth: element.keys.auth
                     }
                 };
+
                 //con la subscripción y con el payload enviar el mensaje
                 webpush.sendNotification(subscripcionDestino, payload)
                     //el mensaje se envió bien
@@ -237,11 +257,16 @@ router.post('/new-message', (req, res) => {
                             auth: element.keys.auth
                         });
                         console.log('el mensaje se envió bien!');
-                        res.status(200).json('Mensaje enviado');
                         //guardar el objeto mensaje
                         msgGuardar.save((err) => {
-                            if (err) console.log(`Hubo un error al guardar el msg. Error: ${err}`);
-                            console.log('Guardado del msg en mongo ok!');
+                            if (err) {
+                                console.log(`Hubo un error al guardar el msg. Error: ${err}`);
+                                res.status(202).json('Mensaje enviado ok. No se pudo guardar en la db');
+                            } else {
+                                console.log('Guardado del msg en mongo ok!');
+                                res.status(201).json('Mensaje enviado ok y persistido en la db ok');
+                            }
+                            
                         });
                     })
                     .catch((err) => {
