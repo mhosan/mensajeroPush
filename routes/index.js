@@ -9,6 +9,11 @@ const categoriasEsquema = require('../modelos/category');
 
 let pushSubscription;
 let subscripcionDestino;
+const categorias = {
+    1: 'sistema',
+    2: 'pages',
+    3: 'tarjeta'
+}
 
 //---------------------------------------------------------------------
 // pagina principal
@@ -16,18 +21,19 @@ let subscripcionDestino;
 router.get('/', (req, res) => {
     let jsonSuscrip = [];
     let jsonMsg = [];
+
     suscripcionesEsquema.find().exec()  //<--leer subscripciones
         .then((suscrip) => {
             suscrip.forEach(element => {
                 let fechaMongo = new Date(element.fechaAlta);
                 fechaLocal = fechaMongo.toLocaleString('es-AR');
                 let correo = element.mail;
-                if( typeof(correo) === 'undefined'){
+                if (typeof (correo) === 'undefined') {
                     correo = "---> sin correo <---"
                 } else {
                     correo = element.mail;
                 }
-                console.log(`correo: ${correo}`);
+                //console.log(`correo: ${correo}`);
                 const elementoJson = {
                     keyAuth: element.keys.auth,
                     fechaAlta: fechaLocal,
@@ -35,31 +41,36 @@ router.get('/', (req, res) => {
                 };
                 jsonSuscrip.push(elementoJson);
             });
-            mensajesEsquema.find().sort({'date' : -1}).exec()  //<--leer mensajes
+
+            //buscar la categoria a partir del idcat
+            // let categoriaTexto = "";
+            // const idCategoria = itemMensaje.category;
+            // categoriasEsquema.find({ 'catIndex': idCategoria })
+            //     .then((doc) => {
+            //         categoriaTexto = doc[0].catLabel;
+            //     })
+            //     .catch((err) => {
+            //         console.log('error en el find que busca la categoria');
+            //     });
+            mensajesEsquema.find().sort({ 'date': -1 }).exec()  //<--leer todos los mensajes
                 .then((msgs) => {
                     msgs.forEach(itemMensaje => {
                         let fechaMsg = new Date(itemMensaje.date);
                         fechaMsgLocal = fechaMsg.toLocaleString('es-AR');
+                        const cat = asignarCategoria(itemMensaje.category);
                         const elementoMsgJson = {
                             title: itemMensaje.title,
                             bodyMessage: itemMensaje.bodyMessage,
                             iconImage: itemMensaje.iconImage,
                             date: fechaMsgLocal,
-                            category: itemMensaje.category,
+                            category: cat,//itemMensaje.category,
                             status: itemMensaje.status,
                             auth: itemMensaje.auth,
-
+                            mail: itemMensaje.mail
                         };
                         jsonMsg.push(elementoMsgJson);
                     })
                     res.render('template', { suscriptos: jsonSuscrip, mensajes: jsonMsg });
-                    // let unaCategoria = new categoriasEsquema(
-                    //     {
-                    //     catIndex : 5,
-                    //     catLabel : 'Remates',
-                    //     catDescrip : 'El tema de los remates'
-                    // });
-                    // unaCategoria.save();
                 })
                 .catch((err) => {
                     console.log(`Error en el find de mensajes: ${err}`);
@@ -69,6 +80,22 @@ router.get('/', (req, res) => {
             console.log(`Error en el find de suscrip: ${err}`);
         });
 });
+
+function asignarCategoria (item) {
+    switch (item) {
+        case item = 1:
+            categoria = categorias[1];
+            break;
+        case item = 2:
+            categoria = categorias[2];
+            break;
+        case item = 3:
+            categoria = categorias[3];
+            break;
+    }
+    return categoria
+}
+
 
 //---------------------------------------------------------------------
 // recibiendo (y persistiendo) subscripción
@@ -196,18 +223,8 @@ router.post('/new-message', (req, res) => {
         res.status(420).json(`Error: ${postError}`);
         return
     }
-    //buscar la categoria a partir del idcat
-    const idCategoria = req.body.idcat;
-    console.log(req.body.idcat);
-    categoriasEsquema.find({'catIndex' : idCategoria}).exec()
-    .then((doc)=>{
-        const categoriaTexto = doc[0].catLabel;
-        console.log(`Categoria: ${categoriaTexto}`);
-    })
-    .catch((err)=>{
-        console.log('error en el find que busca la categoria');
-    });
-    
+
+
     const { mail } = req.body;
     const { titulo } = req.body;
     const { msg } = req.body;
@@ -217,7 +234,7 @@ router.post('/new-message', (req, res) => {
         .then((doc) => {
             const cant = doc.length;
             console.log(`Cantidad de elementos ${cant}`);
-            if(cant == 0){
+            if (cant == 0) {
                 console.log('no se encontró ese mail');
                 res.status(550).json(`No se encontró ese mail en la db`);
                 return;
@@ -246,15 +263,16 @@ router.post('/new-message', (req, res) => {
                 webpush.sendNotification(subscripcionDestino, payload)
                     //el mensaje se envió bien
                     .then(() => {
-                        // setear el objeto mensaje a guardar
+                        // setear el objeto mensaje a guardar  <-------
                         var msgGuardar = new mensajesEsquema({
                             title: (JSON.parse(payload)).title,
                             bodyMessage: msg,
                             iconImage: '-',
                             date: new Date(),
-                            category: 99,
+                            category: idcat,
                             status: 99,
-                            auth: element.keys.auth
+                            auth: element.keys.auth,
+                            mail: mail
                         });
                         console.log('el mensaje se envió bien!');
                         //guardar el objeto mensaje
@@ -266,7 +284,7 @@ router.post('/new-message', (req, res) => {
                                 console.log('Guardado del msg en mongo ok!');
                                 res.status(201).json('Mensaje enviado ok y persistido en la db ok');
                             }
-                            
+
                         });
                     })
                     .catch((err) => {

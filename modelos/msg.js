@@ -8,7 +8,8 @@ var msgSchema = new Schema({
     date: Date,
     category: Number,
     status: Number,
-    auth: String
+    auth: String,
+    mail: String
 },
     { versionKey: false }
 );

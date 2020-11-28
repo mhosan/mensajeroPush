@@ -43,7 +43,7 @@
                 </ul>  
                 {{this.createdAt.toLocaleDateString('EU'))}};
                 --}}
-                        <div style="height: 200px; overflow: auto;">
+                        <div style="height: 300px; overflow: auto;">
                             <table class="table table-striped small">
                                 <thead>
                                     <tr>
@@ -65,7 +65,7 @@
 
                     <div class="col-7 mt-3">
                         <p class="card-text" id="totalPush">Mensajes</p>
-                        <div style="height: 200px; overflow: auto;">
+                        <div style="height: 300px; overflow: auto;">
                             <table class="table table-striped small">
                                 <thead>
                                     <tr>
@@ -76,6 +76,7 @@
                                         <th>category</th>
                                         <th>status</th>
                                         <th>auth</th>
+                                        <th>mail</th>
                                     </tr>
                                 </thead>
                                 {{#each mensajes}}
@@ -87,6 +88,7 @@
                                     <td>{{this.category}}</td>
                                     <td>{{this.status}}</td>
                                     <td>{{this.auth}}</td>
+                                    <td>{{this.mail}}</td>
                                 </tr>
                                 {{/each}}
                             </table>
