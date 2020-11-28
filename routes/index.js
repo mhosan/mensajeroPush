@@ -9,11 +9,6 @@ const categoriasEsquema = require('../modelos/category');
 
 let pushSubscription;
 let subscripcionDestino;
-const categorias = {
-    1: 'sistema',
-    2: 'pages',
-    3: 'tarjeta'
-}
 
 //---------------------------------------------------------------------
 // pagina principal
@@ -81,7 +76,14 @@ router.get('/', (req, res) => {
         });
 });
 
-function asignarCategoria (item) {
+function asignarCategoria(item) {
+    const categorias = {
+        1: 'Sistema',
+        2: 'Pages',
+        3: 'Tarjeta',
+        4: 'Creditos',
+        5: 'Remates'
+    }
     switch (item) {
         case item = 1:
             categoria = categorias[1];
@@ -91,6 +93,12 @@ function asignarCategoria (item) {
             break;
         case item = 3:
             categoria = categorias[3];
+            break;
+        case item = 4:
+            categoria = categorias[4];
+            break;
+        case item = 5:
+            categoria = categorias[5];
             break;
     }
     return categoria
