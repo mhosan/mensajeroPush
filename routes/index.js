@@ -100,6 +100,8 @@ function asignarCategoria(item) {
         case item = 5:
             categoria = categorias[5];
             break;
+        default:
+            categoria = "-";
     }
     return categoria
 }
