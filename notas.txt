@@ -1,0 +1,15 @@
+crear imagen:
+docker build -t nombreImagen:version .
+
+ejecutar imagen para crear el container:
+docker run -d nombreImagen 
+
+o tambien:
+docker run -p 3000:3000 -d nombreImagen
+
+y en http://localhost:3000 deberíamos ver nuestro contenedor funcionando
+
+docker tag local-image:tagname new-repo:tagname
+docker push new-repo:tagname
+
+docker push mhosan/mensajeropush:tagname
