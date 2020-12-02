@@ -106,7 +106,6 @@ function asignarCategoria(item) {
     return categoria
 }
 
-
 //---------------------------------------------------------------------
 // recibiendo (y persistiendo) subscripción
 //---------------------------------------------------------------------
@@ -313,6 +312,44 @@ router.post('/new-message', (req, res) => {
             console.log(`Error al buscar el auth a partir del mail`);
             res.status(551).json(`Error en el find de la suscripcion destinataria del mensaje. Error: ${err}`);
         });
+});
+
+//---------------------------------------------------------------------
+// listar notificaciones a partir de un mail
+// { 'mail' : 'algo@gmail.com'}
+//---------------------------------------------------------------------
+router.get('/listado/:mail', (req, res) => {
+    const mail = req.params.mail;
+
+    //mensajesEsquema.find({ 'mail': mail }).lean().exec()
+    mensajesEsquema.find({ 'mail': mail }).exec()
+        .then((doc) => {
+            const cant = doc.length;
+            console.log(`Cantidad de elementos ${cant}`);
+            if (cant == 0) {
+                console.log('no se encontró ese mail');
+                res.status(409).json(`No se encontró ese mail en la db`);
+                return;
+            } else {
+                let data = [];
+                doc.forEach(element => {
+                    data.push({
+                        title: element.title,
+                        bodyMessage: element.bodyMessage,
+                        iconImage: element.iconImage,
+                        date: element.date,
+                        category: element.category,
+                        status: element.status,
+                        auth: element.auth,
+                        mail: element.mail
+                    });
+                });
+                res.status(200).json(data);
+            }
+        })
+        .catch((err) => {
+            console.log(`Error al buscar el mail (find) en la bd`);
+        })
 });
 
 module.exports = router;
