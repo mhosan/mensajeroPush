@@ -14,4 +14,4 @@ var msgSchema = new Schema({
     { versionKey: false }
 );
 
-module.exports = mongoose.model('Mensajes', msgSchema);
+module.exports = mongoose.model('MensajesNada', msgSchema);

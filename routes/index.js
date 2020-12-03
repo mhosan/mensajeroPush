@@ -65,6 +65,11 @@ router.put('/borrar', ctrlSubscripciones.borrarSubscripcion);
 router.post('/new-message', ctrlMsg.newMessage);
 
 //---------------------------------------------------------------------
+// post new-message con sender
+//---------------------------------------------------------------------
+router.post('/new-message-sender', ctrlMsg.newMessageSender);
+
+//---------------------------------------------------------------------
 // listar notificaciones a partir de un mail
 // { 'mail' : 'algo@gmail.com'}
 //---------------------------------------------------------------------
