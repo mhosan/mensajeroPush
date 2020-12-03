@@ -6,105 +6,22 @@ var Schema = mongoose.Schema;
 const suscripcionesEsquema = require('../modelos/subsc');
 const mensajesEsquema = require('../modelos/msg');
 const categoriasEsquema = require('../modelos/category');
+const ctrlSubsc = require('../controladores/ctrlSubsc');
+const ctrlPagPpal = require('../controladores/ctrlPagPpal');
 
 let pushSubscription;
 let subscripcionDestino;
 
 //---------------------------------------------------------------------
-// pagina principal
+// get subscripciones
 //---------------------------------------------------------------------
-router.get('/', (req, res) => {
-    let jsonSuscrip = [];
-    let jsonMsg = [];
+router.get('/subscripciones', ctrlSubsc.getSubscripciones);
 
-    suscripcionesEsquema.find().exec()  //<--leer subscripciones
-        .then((suscrip) => {
-            suscrip.forEach(element => {
-                let fechaMongo = new Date(element.fechaAlta);
-                fechaLocal = fechaMongo.toLocaleString('es-AR');
-                let correo = element.mail;
-                if (typeof (correo) === 'undefined') {
-                    correo = "---> sin correo <---"
-                } else {
-                    correo = element.mail;
-                }
-                //console.log(`correo: ${correo}`);
-                const elementoJson = {
-                    keyAuth: element.keys.auth,
-                    fechaAlta: fechaLocal,
-                    mail: correo
-                };
-                jsonSuscrip.push(elementoJson);
-            });
-
-            //buscar la categoria a partir del idcat
-            // let categoriaTexto = "";
-            // const idCategoria = itemMensaje.category;
-            // categoriasEsquema.find({ 'catIndex': idCategoria })
-            //     .then((doc) => {
-            //         categoriaTexto = doc[0].catLabel;
-            //     })
-            //     .catch((err) => {
-            //         console.log('error en el find que busca la categoria');
-            //     });
-            mensajesEsquema.find().sort({ 'date': -1 }).exec()  //<--leer todos los mensajes
-                .then((msgs) => {
-                    msgs.forEach(itemMensaje => {
-                        let fechaMsg = new Date(itemMensaje.date);
-                        fechaMsgLocal = fechaMsg.toLocaleString('es-AR');
-                        const cat = asignarCategoria(itemMensaje.category);
-                        const elementoMsgJson = {
-                            title: itemMensaje.title,
-                            bodyMessage: itemMensaje.bodyMessage,
-                            iconImage: itemMensaje.iconImage,
-                            date: fechaMsgLocal,
-                            category: cat,//itemMensaje.category,
-                            status: itemMensaje.status,
-                            auth: itemMensaje.auth,
-                            mail: itemMensaje.mail
-                        };
-                        jsonMsg.push(elementoMsgJson);
-                    })
-                    res.render('template', { suscriptos: jsonSuscrip, mensajes: jsonMsg });
-                })
-                .catch((err) => {
-                    console.log(`Error en el find de mensajes: ${err}`);
-                });
-        })
-        .catch((err) => {
-            console.log(`Error en el find de suscrip: ${err}`);
-        });
-});
-
-function asignarCategoria(item) {
-    const categorias = {
-        1: 'Sistema',
-        2: 'Pages',
-        3: 'Tarjeta',
-        4: 'Creditos',
-        5: 'Remates'
-    }
-    switch (item) {
-        case item = 1:
-            categoria = categorias[1];
-            break;
-        case item = 2:
-            categoria = categorias[2];
-            break;
-        case item = 3:
-            categoria = categorias[3];
-            break;
-        case item = 4:
-            categoria = categorias[4];
-            break;
-        case item = 5:
-            categoria = categorias[5];
-            break;
-        default:
-            categoria = "-";
-    }
-    return categoria
-}
+//---------------------------------------------------------------------
+// pagina principal de adm del servidor. Esta página probablemente 
+// desaparezca
+//---------------------------------------------------------------------
+router.get('/', ctrlPagPpal.getSubscripciones);
 
 //---------------------------------------------------------------------
 // recibiendo (y persistiendo) subscripción
