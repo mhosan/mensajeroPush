@@ -74,25 +74,13 @@ ctrlMsg.newMessageSender = async (req, res) => {
                     //el mensaje se envió bien
                     .then(() => {
                         // setear el objeto mensaje a guardar  <-------
-                        // {
-                        //     "mail": "marcelito2@gmail.com",
-                        //     "titulo" : "Activamos para poder ser mejoress --sin trompis",
-                        //     "msg" : "ahi te paso la postman collection via mail .. Ripa esta de vacations",
-                        //     "idcat" : 3,
-                        //     "senderDTO" : {
-                        //                     "id": 321,
-                        //                     "fullname": "Jorge Sexto",
-                        //                     "avatar": "path seleccionado",
-                        //                     "email": "cristianlp.torr@gmail.com"
-                        //     }
-                        // }
                         var msgGuardar = new mensajesConSenderEsquema({
                             title: (JSON.parse(payload)).title,
                             bodyMessage: msg,
                             iconImage: '-',
                             date: new Date(),
                             category: idcat,
-                            status: 99,
+                            status: 0,
                             auth: element.keys.auth,
                             mail: mail,
                             senderDTO: {
