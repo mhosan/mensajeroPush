@@ -1,5 +1,6 @@
 const suscripcionesEsquema = require('../modelos/subsc');
 const mensajesEsquema = require('../modelos/msg');
+const mensajesEsquemaSender = require('../modelos/msgSender');
 const categoriasEsquema = require('../modelos/category');
 const ctrlPagPpal = {};
 
@@ -38,7 +39,7 @@ ctrlPagPpal.getSubscripciones = async (req, res) => {
             //     .catch((err) => {
             //         console.log('error en el find que busca la categoria');
             //     });
-            mensajesEsquema.find().sort({ 'date': -1 }).exec()  //<--leer todos los mensajes
+            mensajesEsquemaSender.find().sort({ 'date': -1 }).exec()  //<--leer todos los mensajes
                 .then((msgs) => {
                     msgs.forEach(itemMensaje => {
                         let fechaMsg = new Date(itemMensaje.date);

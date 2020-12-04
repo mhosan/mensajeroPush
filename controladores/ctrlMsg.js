@@ -149,6 +149,7 @@ ctrlMsg.newMessageSender = async (req, res) => {
 //---------------------------------------------------------------------
 ctrlMsg.newMessage = async (req, res) => {
     res.status(204).json(`Discontinuado por el momento. Sepa disculpar las molestias.`);
+    return;
     // let postError = "";
     // const cantidadParametros = Object.keys(req.body).length;
     // if (!req.body.mail) {
@@ -254,8 +255,8 @@ ctrlMsg.newMessage = async (req, res) => {
 //---------------------------------------------------------------------
 ctrlMsg.listarNotificaciones = async (req, res) => {
     const mail = req.params.mail;
-    //mensajesEsquema.find({ 'mail': mail }).lean().exec()
-    await mensajesEsquema.find({ 'mail': mail }).exec()
+    //mensajesEsquemaConSender.find({ 'mail': mail }).lean().exec()
+    await mensajesConSenderEsquema.find({ 'mail': mail }, {'_id': 0}).sort({'date':-1}).exec()
         .then((doc) => {
             const cant = doc.length;
             console.log(`Cantidad de elementos ${cant}`);
@@ -264,20 +265,26 @@ ctrlMsg.listarNotificaciones = async (req, res) => {
                 res.status(409).json(`No se encontró ese mail en la db`);
                 return;
             } else {
-                let data = [];
-                doc.forEach(element => {
-                    data.push({
-                        title: element.title,
-                        bodyMessage: element.bodyMessage,
-                        iconImage: element.iconImage,
-                        date: element.date,
-                        category: element.category,
-                        status: element.status,
-                        auth: element.auth,
-                        mail: element.mail
-                    });
-                });
-                res.status(200).json(data);
+                // let data = [];
+                // doc.forEach(element => {
+                //     data.push({
+                //         title: element.title,
+                //         bodyMessage: element.bodyMessage,
+                //         iconImage: element.iconImage,
+                //         date: element.date,
+                //         category: element.category,
+                //         status: element.status,
+                //         auth: element.auth,
+                //         mail: element.mail,
+                //         senderDTO: {
+                //             id: id,
+                //             fullname: fullname,
+                //             avatar: avatar,
+                //             email: email
+                //         }
+                //     });
+                // });
+                res.status(200).json(doc);
             }
         })
         .catch((err) => {

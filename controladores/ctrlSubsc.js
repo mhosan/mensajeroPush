@@ -97,9 +97,15 @@ ctrlSubscripciones.borrarSubscripcion = async (req, res) => {
 // listar todas las subscripciones
 //---------------------------------------------------------------------
 ctrlSubscripciones.getSubscripciones = async (req, res) => {
-    const subscripciones = await suscripcionesEsquema.find();
+    await suscripcionesEsquema.find().sort({'fechaAlta': -1}).exec()
+    .then((respuesta)=>{
+        res.status(200).json(respuesta);
+    })
+    .catch((err) => {
+        res.status(500).json(`Error en el find subscripciones: ${err}`);
+    })
 
-    res.status(200).json(subscripciones)
+    
 }
 
 
