@@ -4,11 +4,12 @@ const mensajesEsquemaSender = require('../modelos/msgSender');
 const categoriasEsquema = require('../modelos/category');
 const ctrlPagPpal = {};
 
+
 //get subscripciones
 ctrlPagPpal.getSubscripciones = async (req, res) => {
     let jsonSuscrip = [];
     let jsonMsg = [];
-
+    let jsonCat = [];
     suscripcionesEsquema.find().exec()  //<--leer subscripciones
         .then((suscrip) => {
             suscrip.forEach(element => {
@@ -39,6 +40,7 @@ ctrlPagPpal.getSubscripciones = async (req, res) => {
             //     .catch((err) => {
             //         console.log('error en el find que busca la categoria');
             //     });
+            //mensajesEsquemaSender.find().sort({ 'date': -1 }).exec()  //<--leer todos los mensajes
             mensajesEsquemaSender.find().sort({ 'date': -1 }).exec()  //<--leer todos los mensajes
                 .then((msgs) => {
                     msgs.forEach(itemMensaje => {
@@ -53,11 +55,34 @@ ctrlPagPpal.getSubscripciones = async (req, res) => {
                             category: cat,//itemMensaje.category,
                             status: itemMensaje.status,
                             auth: itemMensaje.auth,
-                            mail: itemMensaje.mail
+                            mail: itemMensaje.mail,
+                            senderDTO: {
+                                id: itemMensaje.senderDTO.id,
+                                fullname: itemMensaje.senderDTO.fullname,
+                                avatar: itemMensaje.senderDTO.avatar,
+                                email: itemMensaje.senderDTO.email
+                            }
                         };
                         jsonMsg.push(elementoMsgJson);
                     })
-                    res.render('template', { suscriptos: jsonSuscrip, mensajes: jsonMsg });
+                    categoriasEsquema.find().exec()
+                        .then((doc) => {
+                            doc.forEach(element => {
+                                const elementoCategoria = {
+                                    catIndex: element.catIndex,
+                                    catLabel: element.catLabel,
+                                    catDescrip: element.catDescrip
+                                };
+                                jsonCat.push(elementoCategoria);
+                            });
+                            console.log(`cat: ${jsonCat}`);
+                            res.render('template', { suscriptos: jsonSuscrip, mensajes: jsonMsg, category: jsonCat });
+                        })
+                        .catch((err) => {
+                            console.log('error en el find de categorias', err);
+                        })
+
+
                 })
                 .catch((err) => {
                     console.log(`Error en el find de mensajes: ${err}`);
@@ -67,7 +92,6 @@ ctrlPagPpal.getSubscripciones = async (req, res) => {
             console.log(`Error en el find de suscrip: ${err}`);
         });
 }
-
 
 function asignarCategoria(item) {
     const categorias = {

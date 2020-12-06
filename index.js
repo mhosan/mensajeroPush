@@ -35,11 +35,6 @@ app.use(require('./routes/index.js'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --------------------------------------------------------------------
-// ----> Seteo de view engine -----------------------------------------
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'hbs');
-
-// --------------------------------------------------------------------
 // conectarse a la base de datos mongo
 // --------------------------------------------------------------------
 //const mongoDB = 'mongodb://localhost/msgpush';

@@ -7,12 +7,12 @@
 
 <body>
     <div class="container-fluid">
-        <p class="text-center h4 pt-3 pb-3">Servidor push</p>
+        <p class="text-center h5 pt-2 pb-2">Servidor push</p>
         <div class="card" style="margin-left: auto; margin-right: auto; ">
-            <div class="card-header text-center h5">
+            {{!-- <div class="card-header text-center h5">
                 Gestión de notificaciones
-                {{!-- <a class="nav-item nav-link" href="/sus">Detalle subscripciones</a> --}}
-            </div>
+                <a class="nav-item nav-link" href="/sus">Detalle subscripciones</a>
+            </div> --}}
             <div class="card-body" style="margin-left:auto; margin-right:auto;">
                 {{!-- <h6 class="card-title" style="text-decoration:underline;">Enviar mensaje</h6>
                  <form class="form-inline" id="miForm">
@@ -32,28 +32,20 @@
                 </form> --}}
 
                 <div class="row ">
-                    <div class="col-5 mt-3">
-                        <p class="card-text" id="totalPush">Suscripciones</p>
-                        {{!-- <ul class="list-group list-group-flush" id="listaPush" style="height: 70px; overflow: auto;">
-                    {{#each suscriptos}}
-                    <li>
-                        {{this.keys.auth}}
-                    </li>
-                    {{/each}}
-                </ul>  
-                {{this.createdAt.toLocaleDateString('EU'))}};
-                --}}
-                        <div style="height: 300px; overflow: auto;">
+                    <div class="col-6 ">
+                        <div style="height: 150px; overflow: auto;">
                             <table class="table table-striped small">
                                 <thead>
-                                    <tr>
+                                    <tr style="text-align:center">
+                                        <th>SUBSCRIP.</th>
                                         <th>Id</th>
                                         <th>mail</th>
                                         <th>Fecha</th>
                                     </tr>
                                 </thead>
                                 {{#each suscriptos}}
-                                <tr>
+                                <tr style="text-align:center">
+                                    <td></td>
                                     <td>{{this.keyAuth}}</td>
                                     <td>{{this.mail}}</td>
                                     <td>{{this.fechaAlta}}</td>
@@ -62,48 +54,83 @@
                             </table>
                         </div>
                     </div>
-
-                    <div class="col-7 mt-3">
-                        <p class="card-text" id="totalPush">Mensajes</p>
-                        <div style="height: 300px; overflow: auto;">
+                    <div class="col-6">
+                        <div style="height: 150px; overflow: auto;">
                             <table class="table table-striped small">
                                 <thead>
-                                    <tr>
-                                        <th>title</th>
-                                        <th>bodyMessage</th>
-                                        <th>iconImage</th>
-                                        <th>date</th>
-                                        <th>category</th>
-                                        <th>status</th>
-                                        <th>auth</th>
-                                        <th>mail</th>
+                                    <tr style="text-align:center">
+                                        <th>CATEGORIAS</th>
+                                        <th>catIndex</th>
+                                        <th>catLabel</th>
+                                        <th>catDescrip</th>
                                     </tr>
                                 </thead>
-                                {{#each mensajes}}
-                                <tr>
-                                    <td>{{this.title}}</td>
-                                    <td>{{this.bodyMessage}}</td>
-                                    <td>{{this.iconImage}}</td>
-                                    <td>{{this.date}}</td>
-                                    <td>{{this.category}}</td>
-                                    <td>{{this.status}}</td>
-                                    <td>{{this.auth}}</td>
-                                    <td>{{this.mail}}</td>
+                                {{#each category}}
+                                <tr style="text-align:center">
+                                    <td></td>
+                                    <td>{{this.catIndex}}</td>
+                                    <td>{{this.catLabel}}</td>
+                                    <td>{{this.catDescrip}}</td>
                                 </tr>
                                 {{/each}}
                             </table>
                         </div>
                     </div>
                 </div>
-
             </div>
-            <div class="card-footer text-muted text-center font-italic">
-                &copy;Desarrollos ..., todos los derechos reservandos.
+
+            <div class="row ml-2 mr-2">
+                {{!-- <div class="col mt-1 pr-1"> --}}
+                {{!-- <p class="card-text " id="totalPush">Mensajes</p> --}}
+                {{!-- </div> --}}
+                {{!-- <div class="col"> --}}
+                <div style="height: 300px; overflow: auto; ">
+                    <table class="table table-striped small">
+                        <thead>
+                            <tr style="text-align:center">
+                                <th>NOTIF.</th>
+                                <th>title</th>
+                                <th>bodyMessage</th>
+                                <th>iconImage</th>
+                                <th>date</th>
+                                <th>category</th>
+                                <th>status</th>
+                                <th>auth</th>
+                                <th>mail</th>
+                                <th>Sender<br>id</th>
+                                <th>Sender<br>fullname</th>
+                                <th>Sender<br>avatar</th>
+                                <th>Sender<br>email</th>
+                            </tr>
+                        </thead>
+                        {{#each mensajes}}
+                        <tr style="text-align:center">
+                            <td></td>
+                            <td>{{this.title}}</td>
+                            <td>{{this.bodyMessage}}</td>
+                            <td>{{this.iconImage}}</td>
+                            <td>{{this.date}}</td>
+                            <td>{{this.category}}</td>
+                            <td>{{this.status}}</td>
+                            <td>{{this.auth}}</td>
+                            <td>{{this.mail}}</td>
+                            <td>{{this.senderDTO.id}}</td>
+                            <td>{{this.senderDTO.fullname}}</td>
+                            <td>{{this.senderDTO.avatar}}</td>
+                            <td>{{this.senderDTO.email}}</td>
+                        </tr>
+                        {{/each}}
+                    </table>
+                </div>
+                {{!-- </div> --}}
             </div>
         </div>
-
     </div>
+    {{!-- <div class="card-footer text-muted text-center font-italic">
+        &copy;Desarrollos ..., todos los derechos reservandos.
+    </div> --}}
+    <script src="./main.js"></script>
 </body>
-<script src="./main.js"></script>
+
 
 </html>
