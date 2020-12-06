@@ -75,7 +75,6 @@ ctrlPagPpal.getSubscripciones = async (req, res) => {
                                 };
                                 jsonCat.push(elementoCategoria);
                             });
-                            console.log(`cat: ${jsonCat}`);
                             res.render('template', { suscriptos: jsonSuscrip, mensajes: jsonMsg, category: jsonCat });
                         })
                         .catch((err) => {
