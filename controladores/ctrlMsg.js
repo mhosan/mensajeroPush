@@ -103,7 +103,7 @@ ctrlMsg.newMessageSender = (req, res) => {
                             }
 
                         });
-                        res.status(201).json('Mensaje enviado ok y persistido en la db ok');
+                        //res.status(201).json('Mensaje enviado ok y persistido en la db ok');
                     })
                     .catch((err) => {
                         //error al enviar el mensaje
