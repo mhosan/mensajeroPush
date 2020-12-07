@@ -94,16 +94,14 @@ ctrlMsg.newMessageSender = (req, res) => {
                         
                         //guardar el obj mensaje
                         msgGuardar.save((err) => {
-                            if (!err) {
+                            if (err) {
                                 console.log(`Hubo un error al guardar el msg. Error: ${err}`);
-                                res.json(`Error al guardar el msg en la base de datos`);
+                                res.status(500).json(`Error al guardar el msg en la base de datos`);
                             } else {
                                 console.log('Guardado del msg en mongo ok!');
-                                
+                                res.status(201).json('Mensaje enviado ok y persistido en la db ok');
                             }
-
                         });
-                        //res.status(201).json('Mensaje enviado ok y persistido en la db ok');
                     })
                     .catch((err) => {
                         //error al enviar el mensaje
