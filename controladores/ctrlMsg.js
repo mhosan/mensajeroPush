@@ -3,6 +3,7 @@ const mensajesEsquema = require('../modelos/msg');
 const mensajesConSenderEsquema = require('../modelos/msgSender');
 const categoriasEsquema = require('../modelos/category');
 const webpush = require('../webpush');
+//const moment = require('moment');
 const ctrlMsg = {};
 
 //---------------------------------------------------------------------
@@ -74,6 +75,10 @@ ctrlMsg.newMessageSender = (req, res) => {
                     //el mensaje se envió bien
                     .then(() => {
                         // setear el objeto mensaje a guardar  <-------
+                        // const fechaYhora = new Date().toLocaleString('es-ES', {
+                        //     timeZone: 'Asia/Calcutta'
+                        //   });
+                        
                         var msgGuardar = new mensajesConSenderEsquema({
                             title: (JSON.parse(payload)).title,
                             bodyMessage: msg,

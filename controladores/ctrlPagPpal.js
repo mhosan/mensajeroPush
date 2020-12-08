@@ -14,7 +14,7 @@ ctrlPagPpal.getSubscripciones = async (req, res) => {
         .then((suscrip) => {
             suscrip.forEach(element => {
                 let fechaMongo = new Date(element.fechaAlta);
-                fechaLocal = fechaMongo.toLocaleString('es-AR');
+                fechaLocal = fechaMongo.toLocaleString('es-ES');
                 let correo = element.mail;
                 if (typeof (correo) === 'undefined') {
                     correo = "---> sin correo <---"
