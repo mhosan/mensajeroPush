@@ -26,7 +26,6 @@ const guardarMsg = (msgGuardar) => {
 const enviarMsg = async (subscripcionDestino, payload) => {
     await webpush.sendNotification(subscripcionDestino, payload)
         .then(() => {
-            console.log('2do then, ok!');
             mensajeError.push(0);
         })
         .catch((err) => {
@@ -86,7 +85,6 @@ ctrlMsg.newMessageSender = (req, res) => {
             return doc;
         })
         .then((doc) => {
-            //doc.forEach(element => {
             for (let i = 0; i < doc.length; i++) {
                 const payload = JSON.stringify({
                     title: titulo,
@@ -101,11 +99,10 @@ ctrlMsg.newMessageSender = (req, res) => {
                 };
                 let resultadoEnviar = enviarMsg(subscripcionDestino, payload);
                 resultadoEnviar.then((algo) => {
-                    console.log(`algo: ${algo}`);
                     if (i === doc.length-1) {
-                        console.log(`i: ${i}, algo: ${algo}, mensajeError: ${mensajeError}`);
+                        console.log(`mensajeError: ${mensajeError}`);
                         const huboError = mensajeError.indexOf(1);
-                        if(huboError == -1){
+                        if(huboError === -1){
                             console.log('no hubo error')
                             res.status(200).json(`Mensaje/s enviado/s ok`);
                         } else {
