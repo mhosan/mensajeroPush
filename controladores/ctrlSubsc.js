@@ -75,21 +75,14 @@ ctrlSubscripciones.deleteSubscripcion = async (req, res) => {
 // llamada API request tradicional
 //---------------------------------------------------------------------
 ctrlSubscripciones.borrarSubscripcion = async (req, res) => {
-    console.log(`Se recibió un pedido de borrar ${req.body.valor}`);
-    let buscar = JSON.stringify(req.body.valor); //convertir el objeto recibido en string
-    buscar = buscar.slice(4, -3);  //limpiarlo
-    console.log(buscar);
-    // suscripcionesEsquema.findOne({"keys.auth" : buscar}, (err, respuesta)=>{
-    //     if(err) console.log(err);
-    //     console.log(respuesta);
-    // })
-    await suscripcionesEsquema.remove({ "keys.auth": buscar }).exec()
-        .then((respuesta) => {
-            console.log(`Se borró la suscripción ${req.body.valor}`);
-        })
-        .catch((err) => {
-            console.log(`Hubo un error al borrar la suscripción ${req.body.valor}. Error: ${err}`);
-        })
+    // console.log(`Se recibió un pedido de borrar ${req.body.valor}`);
+    // let buscar = JSON.stringify(req.body.valor); //convertir el objeto recibido en string
+    // buscar = buscar.slice(4, -3);  //limpiarlo
+    // console.log(buscar);
+    suscripcionesEsquema.findOneAndDelete({"keys.auth" : req.body.valor}, (err, respuesta)=>{
+        if(err) console.log(`Hubo un error al borrar la suscripción ${req.body.valor}. Error: ${err}`); 
+        console.log(`Se borró la suscripción ${req.body.valor}`);
+    })
 }
 
 //---------------------------------------------------------------------
