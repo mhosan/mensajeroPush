@@ -7,26 +7,26 @@ const webpush = require('../webpush');
 const ctrlMsg = {};
 
 //function verificarAuths(doc){
-    //let authsVerificados = [];
-    
-    //_id:5fca4bbedfc24f7d3a67cf87,
-    //keys: {
-    //      p256dh:"BOHB1BXFMSpbv2gnzqddbQz5wTFPAHBBzQYUbaH02MiEl_7NcStjPF2QS95xw-IkN05c_R..."
-    //      auth:"M8D4zRQdDV0UL23VfN3vng"
-    //      },
-    //endpoint:"https://updates.push.services.mozilla.com/wpush/v2/gAAAAABftCTjvW9eMgz..."
-    //expirationTime:null,
-    //fechaAlta:2020-12-04T14:46:22.435+00:00,
-    //mail:"douglastrejos@gmail.com"
-    
-    // doc.forEach(element => {
-    //      //payload
-    //      const payload = JSON.stringify({
-    //         title: 'verificación',
-    //         message: msg
-    //     });
-    // });
-    //return authsVerificados;
+//let authsVerificados = [];
+
+//_id:5fca4bbedfc24f7d3a67cf87,
+//keys: {
+//      p256dh:"BOHB1BXFMSpbv2gnzqddbQz5wTFPAHBBzQYUbaH02MiEl_7NcStjPF2QS95xw-IkN05c_R..."
+//      auth:"M8D4zRQdDV0UL23VfN3vng"
+//      },
+//endpoint:"https://updates.push.services.mozilla.com/wpush/v2/gAAAAABftCTjvW9eMgz..."
+//expirationTime:null,
+//fechaAlta:2020-12-04T14:46:22.435+00:00,
+//mail:"douglastrejos@gmail.com"
+
+// doc.forEach(element => {
+//      //payload
+//      const payload = JSON.stringify({
+//         title: 'verificación',
+//         message: msg
+//     });
+// });
+//return authsVerificados;
 //}
 
 //---------------------------------------------------------------------
@@ -60,7 +60,7 @@ ctrlMsg.newMessageSender = (req, res) => {
     const { idcat } = req.body;
     const { senderDTO } = req.body;
     const { id } = senderDTO;
-    const { fullname} = senderDTO;
+    const { fullname } = senderDTO;
     const { avatar } = senderDTO;
     const { email } = senderDTO;
     //console.log(`id: ${id}, fullname: ${fullname}, avatar: ${avatar}, sender email: ${email}`);
@@ -76,6 +76,7 @@ ctrlMsg.newMessageSender = (req, res) => {
                 res.status(550).json(`No se encontró ese mail en la db`);
                 return;
             }
+
             doc.forEach(element => {
                 //encontrada/s la/s subscripcion/nes, recuperar el auth para armar el payload, luego
                 //armar el objeto subscripcion a utilizar para enviar el msg y armar un objeto
@@ -105,7 +106,7 @@ ctrlMsg.newMessageSender = (req, res) => {
                         // const fechaYhora = new Date().toLocaleString('es-ES', {
                         //     timeZone: 'Asia/Calcutta'
                         //   });
-                        
+
                         var msgGuardar = new mensajesConSenderEsquema({
                             title: (JSON.parse(payload)).title,
                             bodyMessage: msg,
@@ -122,7 +123,7 @@ ctrlMsg.newMessageSender = (req, res) => {
                                 email: email
                             }
                         });
-                                                
+
                         //guardar el obj mensaje
                         msgGuardar.save((err) => {
                             if (err) {
@@ -149,12 +150,12 @@ ctrlMsg.newMessageSender = (req, res) => {
                         }
                     })
             }) //<---pie del foreach
-            if(mensajeError === 0){
-                console.log(`Error en ${mensajeError} mensaje/s`);
-                res.status(550).json(`Error al enviar el msg.`);
-            } else {
+            if (mensajeError === 0) {
                 console.log(`Mensaje/s enviado/s ok.`);
                 res.status(200).json(`Mensaje/s enviado/s ok.`);
+            } else {
+                console.log(`Error en ${mensajeError} mensaje/s`);
+                res.status(550).json(`Error al enviar el msg.`);
             }
         })
         .catch((err) => {
@@ -189,7 +190,7 @@ ctrlMsg.newMessage = async (req, res) => {
 ctrlMsg.listarNotificaciones = async (req, res) => {
     const mail = req.params.mail;
     //mensajesEsquemaConSender.find({ 'mail': mail }).lean().exec()
-    await mensajesConSenderEsquema.find({ 'mail': mail }, {'_id': 0}).sort({'date':-1}).exec()
+    await mensajesConSenderEsquema.find({ 'mail': mail }, { '_id': 0 }).sort({ 'date': -1 }).exec()
         .then((doc) => {
             const cant = doc.length;
             console.log(`Cantidad de elementos ${cant}`);

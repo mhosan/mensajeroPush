@@ -13,20 +13,21 @@ const guardarMsg = (msgGuardar) => {
         if (err) {
             console.log(`Hubo un error al guardar el msg. Error: ${err}`);
             //res.status(500).json(`Error al guardar el msg en la base de datos`);
-            guardarMensajeError = true;
+            //guardarMensajeError = true;
         } else {
             console.log('Guardado del msg en mongo ok!');
             //res.status(201).json('Mensaje enviado ok y persistido en la db ok');
-            guardarMensajeError = false;
+            //guardarMensajeError = false;
         }
     });
-    return guardarMensajeError;
+    //return guardarMensajeError;
 }
 
-const enviarMsg = async (subscripcionDestino, payload) => {
+const enviarMsg = async (subscripcionDestino, payload, msgGuardar) => {
     await webpush.sendNotification(subscripcionDestino, payload)
         .then(() => {
             mensajeError.push(0);
+            guardarMsg(msgGuardar);
         })
         .catch((err) => {
             console.log('2do then, ', err);
@@ -40,6 +41,7 @@ const enviarMsg = async (subscripcionDestino, payload) => {
 //---------------------------------------------------------------------
 ctrlMsg.newMessageSender = (req, res) => {
     let mensajeEnviado = 0;
+    mensajeError = [];
 
     let postError = "";
     const cantidadParametros = Object.keys(req.body).length;
@@ -97,20 +99,36 @@ ctrlMsg.newMessageSender = (req, res) => {
                         auth: doc[i].keys.auth
                     }
                 };
-                let resultadoEnviar = enviarMsg(subscripcionDestino, payload);
+                var msgGuardar = new mensajesConSenderEsquema({
+                    title: (JSON.parse(payload)).title,
+                    bodyMessage: msg,
+                    iconImage: '-',
+                    date: new Date(),
+                    category: idcat,
+                    status: 0,
+                    auth: doc[i].keys.auth,
+                    mail: mail,
+                    senderDTO: {
+                        id: id,
+                        fullname: fullname,
+                        avatar: avatar,
+                        email: email
+                    }
+                });
+                let resultadoEnviar = enviarMsg(subscripcionDestino, payload, msgGuardar);
                 resultadoEnviar.then((algo) => {
-                    if (i === doc.length-1) {
+                    if (i === doc.length - 1) {
                         console.log(`mensajeError: ${mensajeError}`);
                         const huboError = mensajeError.indexOf(1);
-                        if(huboError === -1){
+                        if (huboError === -1) {
                             console.log('no hubo error')
                             res.status(200).json(`Mensaje/s enviado/s ok`);
                         } else {
                             console.log('si, hubo error')
-                            if(mensajeError.length > 1){
-                                res.status(500).json(`Error con el envio de alguna notif.`);
+                            if (mensajeError.length > 1) {
+                                res.status(500).json(`Error con el envio de ALGUNA notif.`);
                             } else {
-                                res.status(500).json(`Error con el envio de la notif.`); 
+                                res.status(500).json(`Error con el envio de la notif.`);
                             }
                         }
                     }
