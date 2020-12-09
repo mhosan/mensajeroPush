@@ -4,8 +4,9 @@ const mensajesEsquemaSender = require('../modelos/msgSender');
 const categoriasEsquema = require('../modelos/category');
 const ctrlPagPpal = {};
 
-
+//--------------------------------------------------------------------
 //get subscripciones
+//--------------------------------------------------------------------
 ctrlPagPpal.getSubscripciones = async (req, res) => {
     let jsonSuscrip = [];
     let jsonMsg = [];
@@ -92,6 +93,9 @@ ctrlPagPpal.getSubscripciones = async (req, res) => {
         });
 }
 
+//---------------------------------------------------------------------
+// asignar categorias
+//---------------------------------------------------------------------
 function asignarCategoria(item) {
     const categorias = {
         1: 'Sistema',
@@ -121,6 +125,5 @@ function asignarCategoria(item) {
     }
     return categoria
 }
-
 
 module.exports = ctrlPagPpal;
