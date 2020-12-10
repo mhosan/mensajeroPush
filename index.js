@@ -1,4 +1,6 @@
-require('dotenv').config()  //leer las variables desde el sist op.
+//leer variables de entorno desde el archivo .dotenv-------------------
+require('dotenv').config()
+  
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');

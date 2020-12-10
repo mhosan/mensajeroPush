@@ -28,10 +28,12 @@ const enviarMsg = async (subscripcionDestino, payload, msgGuardar) => {
         .then(() => {
             mensajeError.push(0);
             guardarMsg(msgGuardar);
+            //return mensajeError
         })
         .catch((err) => {
             console.log('2do then, ', err);
             mensajeError.push(1);
+            //return mensajeError
         })
     return mensajeError
 }
