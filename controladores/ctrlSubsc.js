@@ -1,6 +1,7 @@
 const suscripcionesEsquema = require('../modelos/subsc');
 const mensajesEsquema = require('../modelos/msg');
 const categoriasEsquema = require('../modelos/category');
+
 const ctrlSubscripciones = {};
 
 //---------------------------------------------------------------------
@@ -9,6 +10,14 @@ const ctrlSubscripciones = {};
 ctrlSubscripciones.postSubscripcion = async (req, res) => {
     pushSubscription = req.body;
     console.log('Llegó una suscripción: ', pushSubscription);
+    if (req.useragent.isChrome) {
+        console.log(`El navegador utilizado es Chrome`);
+    } else {
+        console.log(`el navegador NO es chrome`);
+        res.status(400).json(`El navegador NO es Chrome. Actualmente único navegador soportado: Chrome.`);
+        return;
+    }
+
     await suscripcionesEsquema.update({ 'keys.auth': pushSubscription.keys.auth },
         {
             $set:

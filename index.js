@@ -29,6 +29,7 @@ app.use(cors());
 app.use(morgan('dev')); //ver por consola las peticiones que llegan al server
 app.use(express.urlencoded({ extended: false }));  //decodif. los datos que llegan desde un form
 app.use(express.json()); //convertir los datos que llegan del front de peticiones http a json
+app.use(require('express-useragent').express());
 
 //Routes
 app.use(require('./routes/index.js'));
